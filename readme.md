@@ -20,6 +20,7 @@ permitindo organização, controle e histórico de dados.
 - **Front Controller:** `public/index.php`
 - **Comunicação assíncrona:** Axios (JSON)
 - **Controle de sessão:** PHP (`$_SESSION`)
+<<<<<<< HEAD
 - **Tratamento de exceções:** `try / catch` (Controller e Model)
 
 ### Fluxo Geral
@@ -30,6 +31,23 @@ Usuário → View → JavaScript (Axios)
 → Banco de Dados
 → JSON
 → View
+=======
+
+### Fluxo Geral
+Navegador (HTML + JavaScript)
+            ↓
+        public/index.php (Front Controller)
+            ↓
+        Controller (ex: PacienteController)
+            ↓
+              Model
+            ↓
+            MySQL
+
+O Front Controller centraliza tanto a navegação entre as páginas (views)
+quanto as requisições de API, direcionando cada chamada ao controller
+responsável.
+>>>>>>> 8b3eb3a (Refatora estrutura para MVC com front controller)
 
 ---
 
@@ -140,6 +158,11 @@ teamodonto/
 │   ├── assets/
 │   └── index.php
 │
+<<<<<<< HEAD
 ├── vendor/
 │
 └── .htaccess
+=======
+│
+└── .htaccess
+>>>>>>> 8b3eb3a (Refatora estrutura para MVC com front controller)

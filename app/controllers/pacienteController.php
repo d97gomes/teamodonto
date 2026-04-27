@@ -1,103 +1,83 @@
 <?php
 
-require_once __DIR__ . '/../models/enderecoModel.php';
-require_once __DIR__ . '/../models/pacienteModel.php';
+require_once __DIR__ . '/../models/PacienteModel.php';
 
-class PacienteController {
+class PacienteController
+{
+    private PacienteModel $model;
 
-    private PDO $db;
-    private EnderecoModel $enderecoModel;
-    private PacienteModel $pacienteModel;
-
-    public function __construct(PDO $db) {
-        $this->db = $db;
-        $this->enderecoModel = new EnderecoModel($db);
-        $this->pacienteModel = new PacienteModel($db);
+    public function __construct()
+    {
+        $this->model = new PacienteModel();
     }
 
-    /* ==========================
+    /* =========================
+       READ – LISTAR TODOS
+    ========================= */
+    public function index(): array
+    {
+        return $this->model->listarTodos();
+    }
+
+    /* =========================
+       READ – BUSCAR POR ID
+    ========================= */
+    public function show(int $id): ?array
+    {
+        return $this->model->buscarPorId($id);
+    }
+
+    /* =========================
        CREATE
-    ========================== */
-    public function criarPacienteComEndereco(array $dados): bool {
+    ========================= */
+    public function store(): array
+    {
+        $dados = json_decode(file_get_contents('php://input'), true);
 
-        if (empty($dados['nome']) || strlen($dados['nome']) < 3) return false;
-        if (empty($dados['cpf']) || strlen($dados['cpf']) < 11) return false;
+        if (!$dados) {
+            return [
+                'success' => false,
+                'message' => 'Dados inválidos'
+            ];
+        }
 
-        if (
-            empty($dados['rua']) ||
-            empty($dados['bairro']) ||
-            empty($dados['cidade']) ||
-            empty($dados['estado'])
-        ) return false;
+        $ok = $this->model->criarPacienteCompleto($dados);
 
-        $enderecoId = $this->enderecoModel->criar([
-            'rua'         => $dados['rua'],
-            'numero'      => $dados['numero'] ?? null,
-            'bairro'      => $dados['bairro'],
-            'complemento' => $dados['complemento'] ?? null,
-            'cidade'      => $dados['cidade'],
-            'estado'      => $dados['estado'],
-            'cep'         => $dados['cep'] ?? null
-        ]);
-
-        return $this->pacienteModel->criar([
-            'nome'           => $dados['nome'],
-            'cpf'            => $dados['cpf'],
-            'telefone'       => $dados['telefone'] ?? null,
-            'email'          => $dados['email'] ?? null,
-            'sexo'           => $dados['sexo'] ?? null,
-            'dataNascimento' => $dados['dataNascimento'] ?? null,
-            'endereco_id'    => $enderecoId
-        ]);
+        return [
+            'success' => $ok
+        ];
     }
 
-    /* ==========================
-       READ (LISTAR)
-    ========================== */
-    public function listarPacientes(): array {
-        return $this->pacienteModel->listar();
-    }
-
-    /* ==========================
-       READ (POR ID)
-    ========================== */
-    public function buscarPacientePorId(int $id): array|false {
-        return $this->pacienteModel->buscarPorId($id);
-    }
-
-    /* ==========================
+    /* =========================
        UPDATE
-    ========================== */
-    public function atualizarPacienteComEndereco(array $dados): bool {
+    ========================= */
+    public function update(int $id): array
+    {
+        $dados = json_decode(file_get_contents('php://input'), true);
 
-        // Atualiza paciente
-        $this->pacienteModel->atualizar([
-            'id'             => $dados['id'],
-            'nome'           => $dados['nome'],
-            'cpf'            => $dados['cpf'],
-            'telefone'       => $dados['telefone'],
-            'email'          => $dados['email'],
-            'sexo'           => $dados['sexo'],
-            'dataNascimento' => $dados['dataNascimento']
-        ]);
+        if (!$dados) {
+            return [
+                'success' => false,
+                'message' => 'Dados inválidos'
+            ];
+        }
 
-        // Atualiza endereço
-        return $this->enderecoModel->atualizar([
-            'id'           => $dados['endereco_id'],
-            'rua'          => $dados['rua'],
-            'numero'       => $dados['numero'],
-            'bairro'       => $dados['bairro'],
-            'complemento'  => $dados['complemento'],
-            'cidade'       => $dados['cidade'],
-            'estado'       => $dados['estado'],
-            'cep'          => $dados['cep']
-        ]);
+        $ok = $this->model->atualizarPacienteCompleto($id, $dados);
+
+        return [
+            'success' => $ok
+        ];
     }
 
-    /* ==========================
-       DELETE
-    ========================== */
-    public function excluirPaciente(int $id): bool {
-        return $this->pacienteModel->excluir($id);
+    /* =========================
+       DELETE (LÓGICO)
+    ========================= */
+    public function destroy(int $id): array
+    {
+        $ok = $this->model->excluirPaciente($id);
+
+        return [
+            'success' => $ok
+        ];
     }
 }

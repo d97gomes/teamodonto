@@ -1,0 +1,11 @@
+RewriteEngine On
+
+RewriteBase /teamOdonto/public/
+
+# Ignora arquivos e pastas reais
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# REGRA CORRETA (aceita rota vazia também)
+RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
