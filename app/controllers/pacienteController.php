@@ -41,6 +41,19 @@ class PacienteController
             ];
         }
 
+        // ✅ VALIDAÇÃO DO SEXO
+        $sexosPermitidos = ['MASCULINO', 'FEMININO', 'OUTROS'];
+
+        if (
+            empty($dados['sexo']) ||
+            !in_array($dados['sexo'], $sexosPermitidos)
+        ) {
+            return [
+                'success' => false,
+                'message' => 'Sexo inválido'
+            ];
+        }
+
         $ok = $this->model->criarPacienteCompleto($dados);
 
         return [
@@ -59,6 +72,19 @@ class PacienteController
             return [
                 'success' => false,
                 'message' => 'Dados inválidos'
+            ];
+        }
+
+        // ✅ VALIDAÇÃO DO SEXO (se vier no update)
+        $sexosPermitidos = ['MASCULINO', 'FEMININO', 'OUTROS'];
+
+        if (
+            isset($dados['sexo']) &&
+            !in_array($dados['sexo'], $sexosPermitidos)
+        ) {
+            return [
+                'success' => false,
+                'message' => 'Sexo inválido'
             ];
         }
 

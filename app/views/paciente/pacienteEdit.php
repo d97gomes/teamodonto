@@ -1,4 +1,9 @@
 <?php
+if (!defined('APP_ROUTER')) {
+    header('Location: /teamOdonto/public/index.php?page=login');
+    exit;
+}
+
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../../models/PacienteModel.php';
 
@@ -35,6 +40,27 @@ require_once __DIR__ . '/../includes/sidebar.php';
         <input class="form-control mb-2"
                name="cpf"
                value="<?= htmlspecialchars($paciente['cpf']) ?>">
+
+       <select class="form-select mb-2" name="sexo" required>
+
+       <option value="">Selecione o sexo</option>
+
+       <option value="MASCULINO"
+              <?= $paciente === 'MASCULINO' ? 'selected' : '' ?>>
+              Masculino
+       </option>
+
+       <option value="FEMININO"
+              <?= $paciente === 'FEMININO' ? 'selected' : '' ?>>
+              Feminino
+       </option>
+
+       <option value="OUTROS"
+              <?= $paciente === 'OUTROS' ? 'selected' : '' ?>>
+              Outros
+       </option>
+
+       </select>
 
         <input class="form-control mb-2"
                name="telefone"

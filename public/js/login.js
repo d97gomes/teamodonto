@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const formData = new FormData(form);
         const msg = document.getElementById('mensagem');
 
-        axios.post('/teamOdonto/public/auth/login', formData)
+        axios.post('/teamOdonto/public/index.php?api=login', formData)
             .then(response => {
                 const data = response.data;
 
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     msg.innerText = data.message;
 
                     setTimeout(() => {
-                        window.location.href = '/teamOdonto/public/home';
+                        window.location.href = '/teamOdonto/public/index.php?page=home';
                     }, 1000);
                 } else {
                     msg.className = 'alert alert-danger';
@@ -40,4 +40,3 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 });
-``

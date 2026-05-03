@@ -1,4 +1,9 @@
 <?php
+if (!defined('APP_ROUTER')) {
+    header('Location: /teamOdonto/public/index.php?page=login');
+    exit;
+}
+
 // VIEW PURA 'Cadastro de Paciente';// VIEW PURA — CREATE
 require_once __DIR__ . '/../includes/header.php';
 require_once __DIR__ . '/../includes/navbar.php';
@@ -23,6 +28,17 @@ require_once __DIR__ . '/../includes/sidebar.php';
                placeholder="CPF"
                required>
 
+               
+        <select class="form-select mb-2"
+                name="sexo"
+                required>
+            <option value="">Selecione o sexo</option>
+            <option value="MASCULINO">Masculino</option>
+            <option value="FEMININO">Feminino</option>
+            <option value="OUTROS">Outros</option>
+        </select>
+
+       
         <input class="form-control mb-2"
                name="telefone"
                placeholder="Telefone">

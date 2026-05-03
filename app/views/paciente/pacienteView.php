@@ -1,4 +1,9 @@
 <?php
+if (!defined('APP_ROUTER')) {
+    header('Location: /teamOdonto/public/index.php?page=login');
+    exit;
+}
+
 $title = 'Paciente';
 require_once __DIR__ . '/../includes/header.php';
 require_once __DIR__ . '/../includes/navbar.php';

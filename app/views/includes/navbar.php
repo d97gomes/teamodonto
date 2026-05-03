@@ -6,7 +6,10 @@
             <span class="text-white me-3">
                 <?= $_SESSION['usuario']['nome'] ?? 'Administrador'; ?>
             </span>
-            <a href="/auth/logout" class="btn btn-light btn-sm">Sair</a>
+            <a href="/teamOdonto/public/index.php?api=logout"
+                class="btn btn-light btn-sm">
+                Sair
+            </a>
         </div>
     </div>
 </nav>
