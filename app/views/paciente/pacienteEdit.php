@@ -46,17 +46,17 @@ require_once __DIR__ . '/../includes/sidebar.php';
        <option value="">Selecione o sexo</option>
 
        <option value="MASCULINO"
-              <?= $paciente === 'MASCULINO' ? 'selected' : '' ?>>
+              <?= (isset($paciente['sexo']) && $paciente['sexo'] === 'MASCULINO') ? 'selected' : '' ?>>
               Masculino
        </option>
 
        <option value="FEMININO"
-              <?= $paciente === 'FEMININO' ? 'selected' : '' ?>>
+              <?= (isset($paciente['sexo']) && $paciente['sexo'] === 'FEMININO') ? 'selected' : '' ?>>
               Feminino
        </option>
 
        <option value="OUTROS"
-              <?= $paciente === 'OUTROS' ? 'selected' : '' ?>>
+              <?= (isset($paciente['sexo']) && $paciente['sexo'] === 'OUTROS') ? 'selected' : '' ?>>
               Outros
        </option>
 

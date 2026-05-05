@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/database.php';
 
-class PacienteModel {
+class DentistaModel {
 
     private PDO $db;
 
@@ -14,19 +14,18 @@ class PacienteModel {
     ========================== */
     public function listarTodos(): array {
         $sql = "
-            SELECT 
-                p.id,
-                d.nome,
-                d.cpf,
-                d.sexo,
-                d.telefone,
-                e.cidade,
-                e.estado
-            FROM paciente p
-            JOIN dados_pessoais d ON d.id = p.dados_pessoais_id
-            JOIN endereco e ON e.id = d.endereco_id
-            WHERE p.ativo = 1
-            ORDER BY d.nome
+            SELECT
+                d.id,
+                dp.nome,
+                dp.cpf,
+                dp.sexo,
+                dp.telefone,
+                d.cro,
+                d.especialidade
+            FROM dentista d
+            JOIN dados_pessoais dp ON dp.id = d.dados_pessoais_id
+            WHERE d.ativo = 1
+            ORDER BY dp.nome
         ";
 
         return $this->db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
@@ -35,7 +34,7 @@ class PacienteModel {
     /* ==========================
        CREATE COMPLETO
     ========================== */
-    public function criarPacienteCompleto(array $dados): bool {
+    public function criarDentistaCompleto(array $dados): bool {
         try {
             $this->db->beginTransaction();
 
@@ -59,26 +58,30 @@ class PacienteModel {
             // DADOS PESSOAIS (COM SEXO ✅)
             $stmt = $this->db->prepare("
                 INSERT INTO dados_pessoais
-                (nome, cpf, sexo, telefone, email, data_nascimento, endereco_id)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                (nome, cpf, sexo, telefone, email, endereco_id)
+                VALUES (?, ?, ?, ?, ?, ?)
             ");
             $stmt->execute([
                 $dados['nome'],
                 $dados['cpf'],
-                $dados['sexo'],               // ✅ AQUI
+                $dados['sexo'],
                 $dados['telefone'] ?? null,
                 $dados['email'] ?? null,
-                $dados['data_nascimento'] ?? null,
                 $enderecoId
             ]);
             $dadosPessoaisId = $this->db->lastInsertId();
 
-            // PACIENTE
+            // DENTISTA
             $stmt = $this->db->prepare("
-                INSERT INTO paciente (dados_pessoais_id)
-                VALUES (?)
+                INSERT INTO dentista
+                (dados_pessoais_id, cro, especialidade)
+                VALUES (?, ?, ?)
             ");
-            $stmt->execute([$dadosPessoaisId]);
+            $stmt->execute([
+                $dadosPessoaisId,
+                $dados['cro'],
+                $dados['especialidade']
+            ]);
 
             $this->db->commit();
             return true;
@@ -90,29 +93,32 @@ class PacienteModel {
     }
 
     /* ==========================
-       BUSCAR POR ID
+       BUSCAR POR ID (COM ENDEREÇO ✅)
     ========================== */
     public function buscarPorId(int $id): array|false {
         $sql = "
             SELECT
-                p.id,
-                d.nome,
-                d.cpf,
-                d.sexo,
-                d.telefone,
-                d.email,
-                d.data_nascimento,
+                d.id,
+                dp.nome,
+                dp.cpf,
+                dp.sexo,
+                dp.telefone,
+                dp.email,
+
                 e.cep,
                 e.logradouro,
                 e.numero,
                 e.complemento,
                 e.bairro,
                 e.cidade,
-                e.estado
-            FROM paciente p
-            JOIN dados_pessoais d ON d.id = p.dados_pessoais_id
-            JOIN endereco e ON e.id = d.endereco_id
-            WHERE p.id = ? AND p.ativo = 1
+                e.estado,
+
+                d.cro,
+                d.especialidade
+            FROM dentista d
+            JOIN dados_pessoais dp ON dp.id = d.dados_pessoais_id
+            JOIN endereco e ON e.id = dp.endereco_id
+            WHERE d.id = ? AND d.ativo = 1
             LIMIT 1
         ";
 
@@ -123,17 +129,17 @@ class PacienteModel {
     }
 
     /* ==========================
-       UPDATE COMPLETO
+       UPDATE COMPLETO (COM ENDEREÇO ✅)
     ========================== */
-    public function atualizarPacienteCompleto(int $id, array $dados): bool {
+    public function atualizarDentistaCompleto(int $id, array $dados): bool {
         try {
             $this->db->beginTransaction();
 
             // ENDEREÇO
             $stmt = $this->db->prepare("
                 UPDATE endereco e
-                JOIN dados_pessoais d ON d.endereco_id = e.id
-                JOIN paciente p ON p.dados_pessoais_id = d.id
+                JOIN dados_pessoais dp ON dp.endereco_id = e.id
+                JOIN dentista d ON d.dados_pessoais_id = dp.id
                 SET
                     e.cep = ?,
                     e.logradouro = ?,
@@ -142,7 +148,7 @@ class PacienteModel {
                     e.bairro = ?,
                     e.cidade = ?,
                     e.estado = ?
-                WHERE p.id = ?
+                WHERE d.id = ?
             ");
             $stmt->execute([
                 $dados['cep'] ?? null,
@@ -155,26 +161,38 @@ class PacienteModel {
                 $id
             ]);
 
-            // DADOS PESSOAIS (COM SEXO ✅)
+            // DADOS PESSOAIS
             $stmt = $this->db->prepare("
-                UPDATE dados_pessoais d
-                JOIN paciente p ON p.dados_pessoais_id = d.id
+                UPDATE dados_pessoais dp
+                JOIN dentista d ON d.dados_pessoais_id = dp.id
                 SET
-                    d.nome = ?,
-                    d.cpf = ?,
-                    d.sexo = ?,
-                    d.telefone = ?,
-                    d.email = ?,
-                    d.data_nascimento = ?
-                WHERE p.id = ?
+                    dp.nome = ?,
+                    dp.cpf = ?,
+                    dp.sexo = ?,
+                    dp.telefone = ?,
+                    dp.email = ?
+                WHERE d.id = ?
             ");
             $stmt->execute([
                 $dados['nome'],
                 $dados['cpf'],
-                $dados['sexo'],                // ✅ AQUI
+                $dados['sexo'],
                 $dados['telefone'] ?? null,
                 $dados['email'] ?? null,
-                $dados['data_nascimento'] ?? null,
+                $id
+            ]);
+
+            // DENTISTA
+            $stmt = $this->db->prepare("
+                UPDATE dentista
+                SET
+                    cro = ?,
+                    especialidade = ?
+                WHERE id = ?
+            ");
+            $stmt->execute([
+                $dados['cro'],
+                $dados['especialidade'],
                 $id
             ]);
 
@@ -190,10 +208,10 @@ class PacienteModel {
     /* ==========================
        DELETE LÓGICO
     ========================== */
-    public function excluirPaciente(int $id): bool {
+    public function excluirDentista(int $id): bool {
         try {
             $stmt = $this->db->prepare(
-                "UPDATE paciente SET ativo = 0 WHERE id = ?"
+                "UPDATE dentista SET ativo = 0 WHERE id = ?"
             );
             return $stmt->execute([$id]);
 
@@ -202,13 +220,13 @@ class PacienteModel {
         }
     }
 
-    public function buscarPorNomeOuCpf(string $termo): array
+    public function buscarPorNomeOuCro(string $termo): array
 {
     $stmt = $this->db->prepare("
-        SELECT p.id, dp.nome, dp.cpf
-        FROM paciente p
-        JOIN dados_pessoais dp ON dp.id = p.dados_pessoais_id
-        WHERE dp.nome LIKE ? OR dp.cpf LIKE ?
+        SELECT d.id, dp.nome, d.cro
+        FROM dentista d
+        JOIN dados_pessoais dp ON dp.id = d.dados_pessoais_id
+        WHERE dp.nome LIKE ? OR d.cro LIKE ?
         ORDER BY dp.nome
         LIMIT 10
     ");
@@ -217,4 +235,5 @@ class PacienteModel {
     $stmt->execute([$like, $like]);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
 }

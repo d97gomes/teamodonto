@@ -19,6 +19,12 @@
                 Dentistas
             </a>
 
+            <!-- ✅ NOVO ITEM: ANAMNESES -->
+            <a href="/teamOdonto/public/index.php?page=anamnese-list"
+               class="list-group-item list-group-item-action">
+                Anamneses
+            </a>
+
             <a href="/teamOdonto/public/index.php?page=agenda"
                class="list-group-item list-group-item-action">
                 Agenda

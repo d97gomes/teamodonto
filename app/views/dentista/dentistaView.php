@@ -4,25 +4,25 @@ if (!defined('APP_ROUTER')) {
     exit;
 }
 
-$title = 'Paciente';
+$title = 'Dentista';
 require_once __DIR__ . '/../includes/header.php';
 require_once __DIR__ . '/../includes/navbar.php';
 require_once __DIR__ . '/../includes/sidebar.php';
 
 $id = $_GET['id'] ?? null;
 if (!$id) {
-    header('Location: /teamOdonto/public/index.php?page=paciente-list');
+    header('Location: /teamOdonto/public/index.php?page=dentista-list');
     exit;
 }
 ?>
 
-<body data-paciente="<?= (int)$id ?>">
+<body data-dentista="<?= (int)$id ?>">
 
 <div class="container-fluid py-4">
 
     <!-- TÍTULO -->
     <h4 class="mb-3">
-        Paciente: <span id="paciente-nome-titulo"></span>
+        Dentista: <span id="dentista-nome-titulo"></span>
     </h4>
 
     <!-- ABAS -->
@@ -30,7 +30,7 @@ if (!$id) {
 
         <li class="nav-item">
             <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#dados">
-                Dados do Paciente
+                Dados do Dentista
             </button>
         </li>
 
@@ -41,14 +41,8 @@ if (!$id) {
         </li>
 
         <li class="nav-item">
-            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#orcamentos">
-                Orçamentos
-            </button>
-        </li>
-
-        <li class="nav-item">
-            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#agendamentos">
-                Agendamentos
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#agenda">
+                Agenda
             </button>
         </li>
 
@@ -58,12 +52,18 @@ if (!$id) {
             </button>
         </li>
 
+        <li class="nav-item">
+            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#orcamentos">
+                Orçamentos
+            </button>
+        </li>
+
     </ul>
 
     <!-- CONTEÚDO DAS ABAS -->
     <div class="tab-content border border-top-0 p-3">
 
-        <!-- DADOS DO PACIENTE -->
+        <!-- DADOS DO DENTISTA -->
         <div class="tab-pane fade show active" id="dados">
 
             <div class="card mb-3">
@@ -72,16 +72,16 @@ if (!$id) {
                     <div class="row">
 
                         <div class="col-md-6">
-                            <p><strong>Nome:</strong> <span id="paciente-nome"></span></p>
-                            <p><strong>CPF:</strong> <span id="paciente-cpf"></span></p>
-                            <p><strong>Telefone:</strong> <span id="paciente-telefone"></span></p>
-                            <p><strong>Email:</strong> <span id="paciente-email"></span></p>
+                            <p><strong>Nome:</strong> <span id="dentista-nome"></span></p>
+                            <p><strong>CPF:</strong> <span id="dentista-cpf"></span></p>
+                            <p><strong>Telefone:</strong> <span id="dentista-telefone"></span></p>
+                            <p><strong>Email:</strong> <span id="dentista-email"></span></p>
                         </div>
 
                         <div class="col-md-6">
-                            <p><strong>Data de Nascimento:</strong>
-                                <span id="paciente-data-nascimento"></span>
-                            </p>
+                            <p><strong>Sexo:</strong> <span id="dentista-sexo"></span></p>
+                            <p><strong>CRO:</strong> <span id="dentista-cro"></span></p>
+                            <p><strong>Especialidade:</strong> <span id="dentista-especialidade"></span></p>
                         </div>
 
                     </div>
@@ -109,9 +109,9 @@ if (!$id) {
         <div class="tab-pane fade" id="anamnese">
 
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h6 class="mb-0">Anamneses do Paciente</h6>
+                <h6 class="mb-0">Anamneses do Dentista</h6>
 
-                <a href="/teamOdonto/public/index.php?page=anamnese-create&paciente_id=<?= (int)$id ?>"
+                <a href="/teamOdonto/public/index.php?page=anamnese-create&dentista_id=<?= (int)$id ?>"
                    class="btn btn-sm btn-primary">
                     Nova Anamnese
                 </a>
@@ -121,12 +121,12 @@ if (!$id) {
                 <thead>
                     <tr>
                         <th>Data</th>
-                        <th>Dentista</th>
+                        <th>Paciente</th>
                         <th class="text-center">Ações</th>
                     </tr>
                 </thead>
 
-                <tbody id="listaAnamnesesPaciente">
+                <tbody id="listaAnamnesesDentista">
                     <tr>
                         <td colspan="3" class="text-center text-muted">
                             Carregando...
@@ -137,16 +137,10 @@ if (!$id) {
 
         </div>
 
-        <!-- ORÇAMENTOS -->
-        <div class="tab-pane fade" id="orcamentos">
-            <p class="text-muted">Nenhum orçamento encontrado.</p>
-            <button class="btn btn-sm btn-primary">Novo Orçamento</button>
-        </div>
-
-        <!-- AGENDAMENTOS -->
-        <div class="tab-pane fade" id="agendamentos">
-            <p class="text-muted">Nenhum agendamento futuro.</p>
-            <button class="btn btn-sm btn-primary">Novo Agendamento</button>
+        <!-- AGENDA -->
+        <div class="tab-pane fade" id="agenda">
+            <p class="text-muted">Nenhum horário cadastrado na agenda.</p>
+            <button class="btn btn-sm btn-primary">Novo Horário</button>
         </div>
 
         <!-- CONSULTAS -->
@@ -154,15 +148,19 @@ if (!$id) {
             <p class="text-muted">Nenhuma consulta registrada.</p>
         </div>
 
+        <!-- ORÇAMENTOS -->
+        <div class="tab-pane fade" id="orcamentos">
+            <p class="text-muted">Nenhum orçamento vinculado.</p>
+        </div>
+
     </div>
 
 </div>
 
-<!-- JS DA ABA ANAMNESES DO PACIENTE -->
-<script src="/teamOdonto/public/js/anamnese/anamnese-paciente.js"></script>
+<!-- JS DA ABA ANAMNESES DO DENTISTA -->
+<script src="/teamOdonto/public/js/anamnese/anamnese-dentista.js"></script>
 
-<!-- JS DA VIEW DO PACIENTE -->
-<script src="/teamOdonto/public/js/paciente/paciente-view.js"></script>
+<!-- JS DA VIEW DO DENTISTA -->
+<script src="/teamOdonto/public/js/dentista/dentista-view.js"></script>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
-</body>

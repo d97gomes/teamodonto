@@ -1,14 +1,14 @@
 <?php
 
-require_once __DIR__ . '/../models/PacienteModel.php';
+require_once __DIR__ . '/../models/DentistaModel.php';
 
-class PacienteController
+class DentistaController
 {
-    private PacienteModel $model;
+    private DentistaModel $model;
 
     public function __construct()
     {
-        $this->model = new PacienteModel();
+        $this->model = new DentistaModel();
     }
 
     /* =========================
@@ -22,7 +22,7 @@ class PacienteController
     /* =========================
        READ – BUSCAR POR ID
     ========================= */
-    public function show(int $id): ?array
+    public function show(int $id): array|false
     {
         return $this->model->buscarPorId($id);
     }
@@ -41,20 +41,31 @@ class PacienteController
             ];
         }
 
-        // ✅ VALIDAÇÃO DO SEXO
+        // ✅ CAMPOS OBRIGATÓRIOS
+        if (
+            empty($dados['nome']) ||
+            empty($dados['cpf']) ||
+            empty($dados['sexo']) ||
+            empty($dados['cro']) ||
+            empty($dados['especialidade'])
+        ) {
+            return [
+                'success' => false,
+                'message' => 'Campos obrigatórios não preenchidos'
+            ];
+        }
+
+        // ✅ VALIDAÇÃO DO SEXO (IGUAL AO PACIENTE)
         $sexosPermitidos = ['MASCULINO', 'FEMININO', 'OUTROS'];
 
-        if (
-            empty($dados['sexo']) ||
-            !in_array($dados['sexo'], $sexosPermitidos)
-        ) {
+        if (!in_array($dados['sexo'], $sexosPermitidos)) {
             return [
                 'success' => false,
                 'message' => 'Sexo inválido'
             ];
         }
 
-        $ok = $this->model->criarPacienteCompleto($dados);
+        $ok = $this->model->criarDentistaCompleto($dados);
 
         return [
             'success' => $ok
@@ -75,7 +86,7 @@ class PacienteController
             ];
         }
 
-        // ✅ VALIDAÇÃO DO SEXO (se vier no update)
+        // ✅ VALIDAÇÃO DO SEXO (SE VIER NO UPDATE)
         $sexosPermitidos = ['MASCULINO', 'FEMININO', 'OUTROS'];
 
         if (
@@ -88,7 +99,7 @@ class PacienteController
             ];
         }
 
-        $ok = $this->model->atualizarPacienteCompleto($id, $dados);
+        $ok = $this->model->atualizarDentistaCompleto($id, $dados);
 
         return [
             'success' => $ok
@@ -100,7 +111,7 @@ class PacienteController
     ========================= */
     public function destroy(int $id): array
     {
-        $ok = $this->model->excluirPaciente($id);
+        $ok = $this->model->excluirDentista($id);
 
         return [
             'success' => $ok
@@ -109,6 +120,6 @@ class PacienteController
 
     public function buscar(string $termo): array
 {
-    return $this->model->buscarPorNomeOuCpf($termo);
+    return $this->model->buscarPorNomeOuCro($termo);
 }
 }
