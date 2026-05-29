@@ -18,95 +18,89 @@ document.addEventListener('DOMContentLoaded', () => {
     /* =========================
        BUSCA DE PACIENTE
     ========================= */
-    inputBuscarPaciente.addEventListener('input', async () => {
+    inputBuscarPaciente.addEventListener('input', () => {
         const termo = inputBuscarPaciente.value.trim();
         listaPacientes.innerHTML = '';
         hiddenPacienteId.value = '';
 
         if (termo.length < 3) return;
 
-        try {
-            const res = await axios.get(
-                `/teamOdonto/public/index.php?api=pacientes&search=${encodeURIComponent(termo)}`
-            );
+        axios
+            .get(`/teamOdonto/public/api.php?api=pacientes&search=${encodeURIComponent(termo)}`)
+            .then(res => {
+                const pacientes = res.data;
 
-            const pacientes = res.data;
+                if (!Array.isArray(pacientes) || pacientes.length === 0) {
+                    listaPacientes.innerHTML =
+                        '<li class="list-group-item text-muted">Nenhum paciente encontrado</li>';
+                    return;
+                }
 
-            if (!Array.isArray(pacientes) || pacientes.length === 0) {
-                listaPacientes.innerHTML =
-                    '<li class="list-group-item text-muted">Nenhum paciente encontrado</li>';
-                return;
-            }
+                pacientes.forEach(p => {
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item list-group-item-action';
+                    li.textContent = `${p.nome} (CPF: ${p.cpf})`;
 
-            pacientes.forEach(p => {
-                const li = document.createElement('li');
-                li.className = 'list-group-item list-group-item-action';
-                li.textContent = `${p.nome} (CPF: ${p.cpf})`;
+                    li.addEventListener('click', () => {
+                        hiddenPacienteId.value = p.id;
+                        inputBuscarPaciente.value = p.nome;
+                        listaPacientes.innerHTML = '';
+                    });
 
-                li.addEventListener('click', () => {
-                    hiddenPacienteId.value = p.id;
-                    inputBuscarPaciente.value = p.nome;
-                    listaPacientes.innerHTML = '';
+                    listaPacientes.appendChild(li);
                 });
-
-                listaPacientes.appendChild(li);
+            })
+            .catch(() => {
+                listaPacientes.innerHTML =
+                    '<li class="list-group-item text-danger">Erro ao buscar pacientes</li>';
             });
-
-        } catch (err) {
-            console.error(err);
-            listaPacientes.innerHTML =
-                '<li class="list-group-item text-danger">Erro ao buscar pacientes</li>';
-        }
     });
 
     /* =========================
        BUSCA DE DENTISTA
     ========================= */
-    inputBuscarDentista.addEventListener('input', async () => {
+    inputBuscarDentista.addEventListener('input', () => {
         const termo = inputBuscarDentista.value.trim();
         listaDentistas.innerHTML = '';
         hiddenDentistaId.value = '';
 
         if (termo.length < 3) return;
 
-        try {
-            const res = await axios.get(
-                `/teamOdonto/public/index.php?api=dentistas&search=${encodeURIComponent(termo)}`
-            );
+        axios
+            .get(`/teamOdonto/public/api.php?api=dentistas&search=${encodeURIComponent(termo)}`)
+            .then(res => {
+                const dentistas = res.data;
 
-            const dentistas = res.data;
+                if (!Array.isArray(dentistas) || dentistas.length === 0) {
+                    listaDentistas.innerHTML =
+                        '<li class="list-group-item text-muted">Nenhum dentista encontrado</li>';
+                    return;
+                }
 
-            if (!Array.isArray(dentistas) || dentistas.length === 0) {
-                listaDentistas.innerHTML =
-                    '<li class="list-group-item text-muted">Nenhum dentista encontrado</li>';
-                return;
-            }
+                dentistas.forEach(d => {
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item list-group-item-action';
+                    li.textContent = `${d.nome} (CRO: ${d.cro})`;
 
-            dentistas.forEach(d => {
-                const li = document.createElement('li');
-                li.className = 'list-group-item list-group-item-action';
-                li.textContent = `${d.nome} (CRO: ${d.cro})`;
+                    li.addEventListener('click', () => {
+                        hiddenDentistaId.value = d.id;
+                        inputBuscarDentista.value = d.nome;
+                        listaDentistas.innerHTML = '';
+                    });
 
-                li.addEventListener('click', () => {
-                    hiddenDentistaId.value = d.id;
-                    inputBuscarDentista.value = d.nome;
-                    listaDentistas.innerHTML = '';
+                    listaDentistas.appendChild(li);
                 });
-
-                listaDentistas.appendChild(li);
+            })
+            .catch(() => {
+                listaDentistas.innerHTML =
+                    '<li class="list-group-item text-danger">Erro ao buscar dentistas</li>';
             });
-
-        } catch (err) {
-            console.error(err);
-            listaDentistas.innerHTML =
-                '<li class="list-group-item text-danger">Erro ao buscar dentistas</li>';
-        }
     });
 
     /* =========================
        SUBMIT DA ANAMNESE
     ========================= */
-    form.addEventListener('submit', async (e) => {
+    form.addEventListener('submit', e => {
         e.preventDefault();
 
         const dados = {
@@ -128,31 +122,27 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        try {
-            const res = await axios.post(
-                '/teamOdonto/public/index.php?api=anamneses',
-                dados
-            );
+        axios
+            .post('/teamOdonto/public/api.php?api=anamneses', dados)
+            .then(res => {
+                if (res.data && res.data.success) {
+                    alert('Anamnese salva com sucesso!');
+                    window.location.href =
+                        '/teamOdonto/public/index.php?page=anamnese-list';
+                } else {
+                    alert(res.data?.message || 'Erro ao salvar anamnese.');
+                }
+            })
+            .catch(err => {
+                if (err.response && err.response.status === 401) {
+                    alert('Sessão expirada. Faça login novamente.');
+                    window.location.href =
+                        '/teamOdonto/public/index.php?page=login';
+                    return;
+                }
 
-            if (res.data && res.data.success) {
-                alert('Anamnese salva com sucesso!');
-                window.location.href =
-                    '/teamOdonto/public/index.php?page=anamnese-list';
-            } else {
-                alert(res.data?.message || 'Erro ao salvar anamnese.');
-            }
-
-        } catch (err) {
-            console.error(err);
-
-            if (err.response && err.response.status === 401) {
-                alert('Sessão expirada. Faça login novamente.');
-                window.location.href =
-                    '/teamOdonto/public/index.php?page=login';
-                return;
-            }
-
-            alert('Erro de comunicação com o servidor.');
-        }
+                alert('Erro de comunicação com o servidor.');
+            });
     });
+
 });

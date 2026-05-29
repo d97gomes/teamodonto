@@ -11,6 +11,7 @@ if (!$id) {
 }
 
 $title = 'Editar Anamnese';
+
 require_once __DIR__ . '/../includes/header.php';
 require_once __DIR__ . '/../includes/navbar.php';
 require_once __DIR__ . '/../includes/sidebar.php';
@@ -33,8 +34,11 @@ require_once __DIR__ . '/../includes/sidebar.php';
         <div class="card-body">
             <form id="formAnamneseEdit" data-id="<?= (int)$id ?>">
 
-                <!-- HISTÓRICO MÉDICO -->
+                <!-- =====================
+                     HISTÓRICO MÉDICO
+                ====================== -->
                 <h6 class="fw-bold">Histórico Médico</h6>
+
                 <div class="row">
                     <div class="col-md-3 form-check">
                         <input class="form-check-input" type="checkbox" id="diabetes">
@@ -81,27 +85,110 @@ require_once __DIR__ . '/../includes/sidebar.php';
 
                 <hr>
 
-                <!-- TEXTOS -->
+                <!-- =====================
+                     MEDICAMENTOS / CIRURGIAS
+                ====================== -->
+                <h6 class="fw-bold">Medicamentos e Cirurgias</h6>
+
                 <div class="row">
-                    <div class="col-md-6">
-                        <label class="form-label">Alergias</label>
-                        <input type="text" class="form-control" id="alergias">
+                    <div class="col-md-4 form-check">
+                        <input class="form-check-input" type="checkbox" id="em_tratamento_medico">
+                        <label class="form-check-label">Em tratamento médico</label>
                     </div>
 
+                    <div class="col-md-4 form-check">
+                        <input class="form-check-input" type="checkbox" id="hospitalizado_ou_operado">
+                        <label class="form-check-label">Hospitalizado / Operado</label>
+                    </div>
+                </div>
+
+                <div class="row mt-2">
                     <div class="col-md-6">
                         <label class="form-label">Medicamentos em uso</label>
                         <input type="text" class="form-control" id="medicamentos_em_uso">
                     </div>
-                </div>
 
-                <div class="mt-3">
-                    <label class="form-label">Observações</label>
-                    <textarea class="form-control" id="observacoes" rows="4"></textarea>
+                    <div class="col-md-6">
+                        <label class="form-label">Detalhes das Cirurgias</label>
+                        <input type="text" class="form-control" id="detalhes_cirurgias">
+                    </div>
                 </div>
 
                 <hr>
 
-                <!-- BOTÕES -->
+                <!-- =====================
+                     HÁBITOS
+                ====================== -->
+                <h6 class="fw-bold">Hábitos</h6>
+
+                <div class="row">
+                    <div class="col-md-3 form-check">
+                        <input class="form-check-input" type="checkbox" id="tabagista">
+                        <label class="form-check-label">Tabagista</label>
+                    </div>
+
+                    <div class="col-md-3 form-check">
+                        <input class="form-check-input" type="checkbox" id="consumo_alcool">
+                        <label class="form-check-label">Consumo de Álcool</label>
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col-md-6">
+                        <label class="form-label">Tipo de Tabaco</label>
+                        <input type="text" class="form-control" id="tipo_tabaco">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Frequência de Álcool</label>
+                        <input type="text" class="form-control" id="frequencia_alcool">
+                    </div>
+                </div>
+
+                <hr>
+
+                <!-- =====================
+                     HIGIENE BUCAL
+                ====================== -->
+                <h6 class="fw-bold">Higiene Bucal</h6>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="form-label">Escovações por dia</label>
+                        <input type="number" class="form-control" id="escovacoes_por_dia" min="0">
+                    </div>
+
+                    <div class="col-md-4 form-check mt-4">
+                        <input class="form-check-input" type="checkbox" id="usa_fio_dental">
+                        <label class="form-check-label">Usa fio dental</label>
+                    </div>
+
+                    <div class="col-md-4 form-check mt-4">
+                        <input class="form-check-input" type="checkbox" id="bruxismo">
+                        <label class="form-check-label">Bruxismo</label>
+                    </div>
+                </div>
+
+                <hr>
+
+                <!-- =====================
+                     HISTÓRICO FAMILIAR / OBS
+                ====================== -->
+                <h6 class="fw-bold">Histórico Familiar</h6>
+
+                <div class="mb-3">
+                    <label class="form-label">Doenças Hereditárias</label>
+                    <input type="text" class="form-control" id="doencas_hereditarias">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Observações</label>
+                    <textarea class="form-control" id="observacoes" rows="4"></textarea>
+                </div>
+
+                <!-- =====================
+                     BOTÕES
+                ====================== -->
                 <button type="submit" class="btn btn-primary">
                     Salvar Alterações
                 </button>

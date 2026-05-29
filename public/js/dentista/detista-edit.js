@@ -12,39 +12,30 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    form.addEventListener('submit', async (e) => {
+    form.addEventListener('submit', e => {
         e.preventDefault();
 
         const dados = Object.fromEntries(
             new FormData(form)
         );
 
-        try {
-            const response = await fetch(
-                `/teamOdonto/public/index.php?api=dentistas&id=${id}`,
-                {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(dados)
+        axios
+            .put(`/teamOdonto/public/api.php?api=dentistas&id=${id}`, dados)
+            .then(response => {
+                const result = response.data;
+
+                if (result.success) {
+                    alert('Dentista atualizado com sucesso!');
+                    window.location.href =
+                        '/teamOdonto/public/index.php?page=dentista-list';
+                } else {
+                    alert(result.message || 'Erro ao atualizar dentista.');
                 }
-            );
-
-            const result = await response.json();
-
-            if (result.success) {
-                alert('Dentista atualizado com sucesso!');
-                window.location.href =
-                    '/teamOdonto/public/index.php?page=dentista-list';
-            } else {
-                alert(result.message || 'Erro ao atualizar dentista.');
-            }
-
-        } catch (error) {
-            console.error(error);
-            alert('Erro de comunicação com o servidor.');
-        }
+            })
+            .catch(error => {
+                console.error(error);
+                alert('Erro de comunicação com o servidor.');
+            });
     });
 
 });

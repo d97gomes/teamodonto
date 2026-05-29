@@ -9,39 +9,48 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     carregarPaciente(id);
-
 });
 
-async function carregarPaciente(id) {
-    try {
-        const response = await axios.get(
-            `/teamOdonto/public/index.php?api=pacientes&id=${id}`
-        );
+/* =========================
+   CARREGAR PACIENTE (VIEW)
+========================= */
+function carregarPaciente(id) {
 
-        const p = response.data;
-        if (!p) {
-            alert('Paciente não encontrado.');
-            return;
-        }
+    axios
+        .get(`/teamOdonto/public/api.php?api=pacientes&id=${id}`)
+        .then(response => {
 
-        // Dados pessoais
-        document.getElementById('paciente-nome').innerText = p.nome ?? '';
-        document.getElementById('paciente-cpf').innerText = p.cpf ?? '';
-        document.getElementById('paciente-telefone').innerText = p.telefone ?? '';
-        document.getElementById('paciente-email').innerText = p.email ?? '';
-        document.getElementById('paciente-data-nascimento').innerText =
-            p.data_nascimento ?? '';
+            const p = response.data;
 
-        // Endereço
-        document.getElementById('endereco-logradouro').innerText = p.logradouro ?? '';
-        document.getElementById('endereco-numero').innerText = p.numero ?? '';
-        document.getElementById('endereco-bairro').innerText = p.bairro ?? '';
-        document.getElementById('endereco-cidade').innerText = p.cidade ?? '';
-        document.getElementById('endereco-estado').innerText = p.estado ?? '';
-        document.getElementById('endereco-cep').innerText = p.cep ?? '';
+            if (!p) {
+                alert('Paciente não encontrado.');
+                return;
+            }
 
-    } catch (error) {
-        console.error(error);
-        alert('Erro ao carregar dados do paciente.');
-    }
+            // Dados pessoais
+            document.getElementById('paciente-nome').innerText = p.nome ?? '';
+            document.getElementById('paciente-cpf').innerText = p.cpf ?? '';
+            document.getElementById('paciente-telefone').innerText = p.telefone ?? '';
+            document.getElementById('paciente-email').innerText = p.email ?? '';
+            document.getElementById('paciente-data-nascimento').innerText =
+                p.data_nascimento ?? '';
+
+            // Endereço
+            document.getElementById('endereco-logradouro').innerText =
+                p.logradouro ?? '';
+            document.getElementById('endereco-numero').innerText =
+                p.numero ?? '';
+            document.getElementById('endereco-bairro').innerText =
+                p.bairro ?? '';
+            document.getElementById('endereco-cidade').innerText =
+                p.cidade ?? '';
+            document.getElementById('endereco-estado').innerText =
+                p.estado ?? '';
+            document.getElementById('endereco-cep').innerText =
+                p.cep ?? '';
+        })
+        .catch(error => {
+            console.error(error);
+            alert('Erro ao carregar dados do paciente.');
+        });
 }

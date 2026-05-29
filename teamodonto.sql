@@ -111,3 +111,45 @@ CREATE TABLE anamneses (
     FOREIGN KEY (paciente_id) REFERENCES paciente(id),
     FOREIGN KEY (dentista_id) REFERENCES dentista(id)
 );
+
+CREATE TABLE procedimentos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(150) NOT NULL,
+    descricao TEXT,
+    valor DECIMAL(10,2) NOT NULL,
+    ativo TINYINT(1) DEFAULT 1,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE orcamentos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+
+    paciente_id INT NOT NULL,
+    dentista_id INT NOT NULL,
+
+    data_orcamento DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    status ENUM('aberto', 'aprovado') DEFAULT 'aberto',
+
+    valor_total DECIMAL(10,2) DEFAULT 0.00,
+
+    FOREIGN KEY (paciente_id) REFERENCES paciente(id),
+    FOREIGN KEY (dentista_id) REFERENCES dentista(id)
+);
+
+CREATE TABLE orcamento_itens (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+
+    orcamento_id INT NOT NULL,
+    procedimento_id INT NOT NULL,
+
+    dente INT NOT NULL,
+    face CHAR(1) NOT NULL,
+
+    valor DECIMAL(10,2) NOT NULL,
+
+    FOREIGN KEY (orcamento_id) REFERENCES orcamentos(id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (procedimento_id) REFERENCES procedimentos(id)
+);

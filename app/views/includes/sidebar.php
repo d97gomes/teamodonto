@@ -25,14 +25,20 @@
                 Anamneses
             </a>
 
+            <!-- ✅ NOVO ITEM: procedimentos -->
+            <a href="/teamOdonto/public/index.php?page=procedimento-list"
+               class="list-group-item list-group-item-action">
+                Procedimentos
+            </a>
+
+           <a href="/teamOdonto/public/index.php?page=orcamento-list"
+               class="list-group-item list-group-item-action">
+                Orçamentos
+            </a>
+            
             <a href="/teamOdonto/public/index.php?page=agenda"
                class="list-group-item list-group-item-action">
                 Agenda
-            </a>
-
-            <a href="/teamOdonto/public/index.php?page=orcamento"
-               class="list-group-item list-group-item-action">
-                Orçamentos
             </a>
 
             <a href="/teamOdonto/public/index.php?page=financeiro"

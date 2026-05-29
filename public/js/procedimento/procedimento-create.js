@@ -1,27 +1,27 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    const form = document.getElementById('formDentista');
+    const form = document.getElementById('formProcedimento');
     if (!form) return;
 
     form.addEventListener('submit', e => {
         e.preventDefault();
 
-        // Coleta os dados do formulário
         const dados = Object.fromEntries(
             new FormData(form)
         );
 
         axios
-            .post('/teamOdonto/public/api.php?api=dentistas', dados)
+            .post('/teamOdonto/public/api.php?api=procedimentos', dados)
             .then(response => {
+
                 const result = response.data;
 
                 if (result.success) {
-                    alert('Dentista cadastrado com sucesso!');
+                    alert('Procedimento cadastrado com sucesso!');
                     window.location.href =
-                        '/teamOdonto/public/index.php?page=dentista-list';
+                        '/teamOdonto/public/index.php?page=procedimento-list';
                 } else {
-                    alert(result.message || 'Erro ao cadastrar dentista.');
+                    alert(result.message || 'Erro ao cadastrar.');
                 }
             })
             .catch(error => {
