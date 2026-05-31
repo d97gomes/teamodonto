@@ -4,110 +4,166 @@ if (!defined('APP_ROUTER')) {
     exit;
 }
 
-require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../../models/PacienteModel.php';
 
-
 if (!isset($_GET['id'])) {
-    header('Location: pacienteList.php');
+    header('Location: /teamOdonto/public/index.php?page=paciente-list');
     exit;
 }
 
 $model = new PacienteModel();
-$paciente = $model->buscarPorId((int)$_GET['id']);
+$paciente = $model->buscarPorId((int) $_GET['id']);
 
 if (!$paciente) {
-    header('Location: pacienteList.php');
+    header('Location: /teamOdonto/public/index.php?page=paciente-list');
     exit;
 }
 
 $title = 'Editar Paciente';
+
 require_once __DIR__ . '/../includes/header.php';
-require_once __DIR__ . '/../includes/navbar.php';
 require_once __DIR__ . '/../includes/sidebar.php';
 ?>
 
-<div class="container py-4">
-    <h3 class="mb-4">Editar Paciente</h3>
+<main class="main-content">
+    <nav class="navbar navbar-custom sticky-top">
+        <h5 class="mb-0 fw-bold">Editar Paciente</h5>
+    </nav>
 
-    <form id="formPaciente">
+    <div class="p-4 p-lg-5">
+        <div class="card p-4 border-0 shadow-sm">
 
-        <h5>Dados Pessoais</h5>
-        <input class="form-control mb-2"
-               name="nome"
-               value="<?= htmlspecialchars($paciente['nome']) ?>">
+            <form id="formPaciente">
 
-        <input class="form-control mb-2"
-               name="cpf"
-               value="<?= htmlspecialchars($paciente['cpf']) ?>">
+                <!-- DADOS PESSOAIS -->
+                <h6 class="fw-bold mb-3">Dados Pessoais</h6>
 
-       <select class="form-select mb-2" name="sexo" required>
+                <div class="row">
+                    <div class="col-md-8 mb-3">
+                        <label class="form-label fw-semibold">Nome completo</label>
+                        <input class="form-control"
+                               name="nome"
+                               value="<?= htmlspecialchars($paciente['nome']) ?>"
+                               required>
+                    </div>
 
-       <option value="">Selecione o sexo</option>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-semibold">CPF</label>
+                        <input class="form-control"
+                               name="cpf"
+                               value="<?= htmlspecialchars($paciente['cpf']) ?>"
+                               required>
+                    </div>
 
-       <option value="MASCULINO"
-              <?= (isset($paciente['sexo']) && $paciente['sexo'] === 'MASCULINO') ? 'selected' : '' ?>>
-              Masculino
-       </option>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-semibold">Sexo</label>
+                        <select class="form-select" name="sexo" required>
+                            <option value="">Selecione</option>
+                            <option value="MASCULINO" <?= $paciente['sexo'] === 'MASCULINO' ? 'selected' : '' ?>>Masculino</option>
+                            <option value="FEMININO" <?= $paciente['sexo'] === 'FEMININO' ? 'selected' : '' ?>>Feminino</option>
+                            <option value="OUTROS" <?= $paciente['sexo'] === 'OUTROS' ? 'selected' : '' ?>>Outros</option>
+                        </select>
+                    </div>
 
-       <option value="FEMININO"
-              <?= (isset($paciente['sexo']) && $paciente['sexo'] === 'FEMININO') ? 'selected' : '' ?>>
-              Feminino
-       </option>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-semibold">Telefone</label>
+                        <input class="form-control"
+                               name="telefone"
+                               value="<?= htmlspecialchars($paciente['telefone']) ?>">
+                    </div>
 
-       <option value="OUTROS"
-              <?= (isset($paciente['sexo']) && $paciente['sexo'] === 'OUTROS') ? 'selected' : '' ?>>
-              Outros
-       </option>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-semibold">Email</label>
+                        <input class="form-control"
+                               name="email"
+                               value="<?= htmlspecialchars($paciente['email']) ?>">
+                    </div>
 
-       </select>
+                    <div class="col-md-4 mb-4">
+                        <label class="form-label fw-semibold">Data de Nascimento</label>
+                        <input type="date"
+                               class="form-control"
+                               name="data_nascimento"
+                               value="<?= htmlspecialchars($paciente['data_nascimento']) ?>">
+                    </div>
+                </div>
 
-        <input class="form-control mb-2"
-               name="telefone"
-               value="<?= htmlspecialchars($paciente['telefone']) ?>">
+                <!-- ENDEREÇO -->
+                <h6 class="fw-bold mt-4 mb-3">Endereço</h6>
 
-        <input class="form-control mb-2"
-               name="email"
-               value="<?= htmlspecialchars($paciente['email']) ?>">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label fw-semibold">CEP</label>
+                        <input class="form-control"
+                               name="cep"
+                               value="<?= htmlspecialchars($paciente['cep']) ?>">
+                    </div>
 
-        <input type="date"
-               class="form-control mb-3"
-               name="data_nascimento"
-               value="<?= $paciente['data_nascimento'] ?>">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Rua</label>
+                        <input class="form-control"
+                               name="logradouro"
+                               value="<?= htmlspecialchars($paciente['logradouro']) ?>"
+                               required>
+                    </div>
 
-        <h5>Endereço</h5>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label fw-semibold">Número</label>
+                        <input class="form-control"
+                               name="numero"
+                               value="<?= htmlspecialchars($paciente['numero']) ?>">
+                    </div>
 
-        <input class="form-control mb-2"
-               name="cep"
-               value="<?= htmlspecialchars($paciente['cep']) ?>">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-semibold">Complemento</label>
+                        <input class="form-control"
+                               name="complemento"
+                               value="<?= htmlspecialchars($paciente['complemento']) ?>">
+                    </div>
 
-        <input class="form-control mb-2"
-               name="logradouro"
-               value="<?= htmlspecialchars($paciente['logradouro']) ?>">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-semibold">Bairro</label>
+                        <input class="form-control"
+                               name="bairro"
+                               value="<?= htmlspecialchars($paciente['bairro']) ?>"
+                               required>
+                    </div>
 
-        <input class="form-control mb-2"
-               name="numero"
-               value="<?= htmlspecialchars($paciente['numero']) ?>">
+                    <div class="col-md-4 mb-4">
+                        <label class="form-label fw-semibold">Cidade</label>
+                        <input class="form-control"
+                               name="cidade"
+                               value="<?= htmlspecialchars($paciente['cidade']) ?>"
+                               required>
+                    </div>
 
-        <input class="form-control mb-2"
-               name="complemento"
-               value="<?= htmlspecialchars($paciente['complemento']) ?>">
+                    <div class="col-md-3 mb-4">
+                        <label class="form-label fw-semibold">Estado</label>
+                        <input class="form-control"
+                               name="estado"
+                               value="<?= htmlspecialchars($paciente['estado']) ?>"
+                               required>
+                    </div>
+                </div>
 
-        <input class="form-control mb-2"
-               name="bairro"
-               value="<?= htmlspecialchars($paciente['bairro']) ?>">
+                <!-- AÇÕES -->
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="/teamOdonto/public/index.php?page=paciente-list"
+                       class="btn btn-secondary">
+                        Cancelar
+                    </a>
 
-        <input class="form-control mb-2"
-               name="cidade"
-               value="<?= htmlspecialchars($paciente['cidade']) ?>">
+                    <button type="submit" class="btn btn-primary fw-semibold">
+                        Salvar Alterações
+                    </button>
+                </div>
 
-        <input class="form-control mb-3"
-               name="estado"
-               value="<?= htmlspecialchars($paciente['estado']) ?>">
+            </form>
 
-        <button class="btn btn-primary">Salvar Alterações</button>
-        <a href="pacienteList.php" class="btn btn-secondary">Cancelar</a>
-    </form>
-</div>
+        </div>
+    </div>
+</main>
+
 <script src="/teamOdonto/public/js/paciente/paciente-edit.js"></script>
+
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>

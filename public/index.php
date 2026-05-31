@@ -106,6 +106,15 @@ switch ($pagina) {
         require __DIR__ . '/../app/views/orcamento/orcamentoView.php';
         break;
 
+    case 'agenda':
+    require '../app/views/agenda/agendaList.php';
+    break;
+
+        case 'agenda-create':
+    require '../app/views/agenda/agendaCreate.php';
+    break;
+
+
     default:
         echo 'Página não encontrada';
 }

@@ -1,8 +1,6 @@
 <?php
 session_start();
 
-header('Content-Type: application/json; charset=utf-8');
-
 /* ======================
    CONTROLLERS
 ====================== */
@@ -14,6 +12,7 @@ require_once __DIR__ . '/../app/controllers/AnamneseController.php';
 require_once __DIR__ . '/../app/controllers/ProcedimentoController.php';
 require_once __DIR__ . '/../app/controllers/OrcamentoController.php';
 require_once __DIR__ . '/../app/controllers/OrcamentoItemController.php';
+require_once __DIR__ . '/../app/controllers/AgendaController.php';
 
 $authController          = new AuthController();
 $pacienteController      = new PacienteController();
@@ -22,6 +21,7 @@ $anamneseController      = new AnamneseController();
 $procedimentoController  = new ProcedimentoController();
 $orcamentoController     = new OrcamentoController();
 $orcamentoItemController = new OrcamentoItemController();
+$agendaController        = new AgendaController();
 
 $api    = $_GET['api'] ?? null;
 $method = $_SERVER['REQUEST_METHOD'];
@@ -31,17 +31,30 @@ $method = $_SERVER['REQUEST_METHOD'];
 ====================== */
 
 if ($api === 'login') {
+    header('Content-Type: application/json; charset=utf-8');
     echo json_encode($authController->login());
     exit;
 }
 
 /* ======================
-   LOGOUT
+   LOGOUT (AJUSTADO)
 ====================== */
 
 if ($api === 'logout') {
+
+    // Limpa todas as variáveis de sessão
+    $_SESSION = [];
+
+    // Destrói a sessão
     session_destroy();
-    echo json_encode(['success' => true]);
+
+    // Evita cache após logout
+    header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+    header("Pragma: no-cache");
+    header("Expires: 0");
+
+    // Redireciona para login
+    header('Location: /teamOdonto/public/index.php?page=login');
     exit;
 }
 
@@ -50,6 +63,7 @@ if ($api === 'logout') {
 ====================== */
 
 if (empty($_SESSION['usuario'])) {
+    header('Content-Type: application/json; charset=utf-8');
     http_response_code(401);
     echo json_encode([
         'success' => false,
@@ -63,6 +77,7 @@ if (empty($_SESSION['usuario'])) {
 ====================== */
 
 if ($api === 'dentistas') {
+    header('Content-Type: application/json; charset=utf-8');
 
     if ($method === 'GET' && isset($_GET['id'])) {
         echo json_encode($dentistaController->show((int) $_GET['id']));
@@ -100,6 +115,7 @@ if ($api === 'dentistas') {
 ====================== */
 
 if ($api === 'pacientes') {
+    header('Content-Type: application/json; charset=utf-8');
 
     if ($method === 'GET' && isset($_GET['id'])) {
         echo json_encode($pacienteController->show((int) $_GET['id']));
@@ -137,6 +153,7 @@ if ($api === 'pacientes') {
 ====================== */
 
 if ($api === 'anamneses') {
+    header('Content-Type: application/json; charset=utf-8');
 
     if ($method === 'GET' && isset($_GET['id'])) {
         echo json_encode($anamneseController->show((int) $_GET['id']));
@@ -144,16 +161,12 @@ if ($api === 'anamneses') {
     }
 
     if ($method === 'GET' && isset($_GET['paciente_id'])) {
-        echo json_encode(
-            $anamneseController->porPaciente((int) $_GET['paciente_id'])
-        );
+        echo json_encode($anamneseController->porPaciente((int) $_GET['paciente_id']));
         exit;
     }
 
     if ($method === 'GET' && isset($_GET['dentista_id'])) {
-        echo json_encode(
-            $anamneseController->porDentista((int) $_GET['dentista_id'])
-        );
+        echo json_encode($anamneseController->porDentista((int) $_GET['dentista_id']));
         exit;
     }
 
@@ -183,6 +196,7 @@ if ($api === 'anamneses') {
 ====================== */
 
 if ($api === 'procedimentos') {
+    header('Content-Type: application/json; charset=utf-8');
 
     if ($method === 'GET' && isset($_GET['id'])) {
         echo json_encode($procedimentoController->show((int) $_GET['id']));
@@ -215,6 +229,7 @@ if ($api === 'procedimentos') {
 ====================== */
 
 if ($api === 'orcamentos') {
+    header('Content-Type: application/json; charset=utf-8');
 
     if ($method === 'GET' && isset($_GET['id'])) {
         echo json_encode($orcamentoController->show((int) $_GET['id']));
@@ -232,9 +247,7 @@ if ($api === 'orcamentos') {
     }
 
     if ($method === 'PUT' && isset($_GET['id'])) {
-        echo json_encode(
-            $orcamentoController->updateStatus((int) $_GET['id'])
-        );
+        echo json_encode($orcamentoController->updateStatus((int) $_GET['id']));
         exit;
     }
 
@@ -249,6 +262,7 @@ if ($api === 'orcamentos') {
 ====================== */
 
 if ($api === 'orcamento-itens') {
+    header('Content-Type: application/json; charset=utf-8');
 
     if ($method === 'POST') {
         echo json_encode($orcamentoItemController->store());
@@ -257,18 +271,12 @@ if ($api === 'orcamento-itens') {
 
     if ($method === 'GET' && isset($_GET['orcamento_id'])) {
         echo json_encode(
-            $orcamentoItemController->index(
-                (int) $_GET['orcamento_id']
-            )
+            $orcamentoItemController->index((int) $_GET['orcamento_id'])
         );
         exit;
     }
 
-    if (
-        $method === 'DELETE' &&
-        isset($_GET['id']) &&
-        isset($_GET['orcamento_id'])
-    ) {
+    if ($method === 'DELETE' && isset($_GET['id'], $_GET['orcamento_id'])) {
         echo json_encode(
             $orcamentoItemController->destroy(
                 (int) $_GET['id'],
@@ -280,9 +288,32 @@ if ($api === 'orcamento-itens') {
 }
 
 /* ======================
+   AGENDA
+====================== */
+
+if ($api === 'agenda' && $method === 'GET') {
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode($agendaController->index());
+    exit;
+}
+
+if ($api === 'agenda' && $method === 'POST') {
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode($agendaController->store());
+    exit;
+}
+
+if ($api === 'agenda-status' && $method === 'PUT') {
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode($agendaController->updateStatus());
+    exit;
+}
+
+/* ======================
    FALLBACK
 ====================== */
 
+header('Content-Type: application/json; charset=utf-8');
 http_response_code(400);
 echo json_encode([
     'success' => false,

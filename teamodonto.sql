@@ -189,3 +189,47 @@ CREATE TABLE orcamento_itens (
   CONSTRAINT orcamento_itens_ibfk_2
     FOREIGN KEY (procedimento_id) REFERENCES procedimentos(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE agenda (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+
+    paciente_id INT NOT NULL,
+    dentista_id INT NOT NULL,
+
+    data DATE NOT NULL,
+    hora TIME NOT NULL,
+
+    sala_id INT NOT NULL,
+
+    status ENUM(
+        'pendente',
+        'confirmado',
+        'em_atendimento',
+        'concluido',
+        'cancelado'
+    ) NOT NULL DEFAULT 'pendente',
+
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE sala (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(50) NOT NULL,
+    ativo TINYINT(1) DEFAULT 1
+);
+
+CREATE TABLE consulta (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+
+    paciente_id INT NOT NULL,
+
+    agenda_id INT NULL,
+
+    data_atendimento DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    evolucao TEXT NOT NULL,
+
+    observacoes TEXT NULL,
+
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);

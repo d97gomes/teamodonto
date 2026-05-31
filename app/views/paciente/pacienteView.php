@@ -5,8 +5,8 @@ if (!defined('APP_ROUTER')) {
 }
 
 $title = 'Paciente';
+
 require_once __DIR__ . '/../includes/header.php';
-require_once __DIR__ . '/../includes/navbar.php';
 require_once __DIR__ . '/../includes/sidebar.php';
 
 $id = $_GET['id'] ?? null;
@@ -16,153 +16,154 @@ if (!$id) {
 }
 ?>
 
-<body data-paciente="<?= (int)$id ?>">
+<main class="main-content" data-paciente="<?= (int)$id ?>">
 
-<div class="container-fluid py-4">
+    <nav class="navbar navbar-custom sticky-top">
+        <h5 class="mb-0 fw-bold">
+            Paciente: <span id="paciente-nome-titulo"></span>
+        </h5>
+    </nav>
 
-    <!-- TÍTULO -->
-    <h4 class="mb-3">
-        Paciente: <span id="paciente-nome-titulo"></span>
-    </h4>
+    <div class="p-4 p-lg-5">
 
-    <!-- ABAS -->
-    <ul class="nav nav-tabs mb-3" role="tablist">
+        <div class="card border-0 shadow-sm">
 
-        <li class="nav-item">
-            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#dados">
-                Dados do Paciente
-            </button>
-        </li>
+            <!-- ABAS -->
+            <ul class="nav nav-tabs px-3 pt-3" role="tablist">
 
-        <li class="nav-item">
-            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#anamnese">
-                Anamneses
-            </button>
-        </li>
+                <li class="nav-item">
+                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#dados">
+                        Dados do Paciente
+                    </button>
+                </li>
 
-        <li class="nav-item">
-            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#orcamentos">
-                Orçamentos
-            </button>
-        </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#anamnese">
+                        Anamneses
+                    </button>
+                </li>
 
-        <li class="nav-item">
-            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#agendamentos">
-                Agendamentos
-            </button>
-        </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#orcamentos">
+                        Orçamentos
+                    </button>
+                </li>
 
-        <li class="nav-item">
-            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#consultas">
-                Consultas
-            </button>
-        </li>
+                <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#agendamentos">
+                        Agendamentos
+                    </button>
+                </li>
 
-    </ul>
+                <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#consultas">
+                        Consultas
+                    </button>
+                </li>
 
-    <!-- CONTEÚDO DAS ABAS -->
-    <div class="tab-content border border-top-0 p-3">
+            </ul>
 
-        <!-- DADOS DO PACIENTE -->
-        <div class="tab-pane fade show active" id="dados">
+            <!-- CONTEÚDO DAS ABAS -->
+            <div class="tab-content p-4">
 
-            <div class="card mb-3">
-                <div class="card-header fw-bold">Dados Pessoais</div>
-                <div class="card-body">
+                <!-- DADOS DO PACIENTE -->
+                <div class="tab-pane fade show active" id="dados">
+
                     <div class="row">
-
                         <div class="col-md-6">
-                            <p><strong>Nome:</strong> <span id="paciente-nome"></span></p>
-                            <p><strong>CPF:</strong> <span id="paciente-cpf"></span></p>
-                            <p><strong>Telefone:</strong> <span id="paciente-telefone"></span></p>
-                            <p><strong>Email:</strong> <span id="paciente-email"></span></p>
+                            <div class="card mb-3">
+                                <div class="card-header fw-bold">Dados Pessoais</div>
+                                <div class="card-body">
+                                    <p><strong>Nome:</strong> <span id="paciente-nome"></span></p>
+                                    <p><strong>CPF:</strong> <span id="paciente-cpf"></span></p>
+                                    <p><strong>Telefone:</strong> <span id="paciente-telefone"></span></p>
+                                    <p><strong>Email:</strong> <span id="paciente-email"></span></p>
+                                    <p>
+                                        <strong>Data de Nascimento:</strong>
+                                        <span id="paciente-data-nascimento"></span>
+                                    </p>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="col-md-6">
-                            <p><strong>Data de Nascimento:</strong>
-                                <span id="paciente-data-nascimento"></span>
-                            </p>
+                            <div class="card">
+                                <div class="card-header fw-bold">Endereço</div>
+                                <div class="card-body">
+                                    <p>
+                                        <span id="endereco-logradouro"></span>,
+                                        <span id="endereco-numero"></span>
+                                    </p>
+                                    <p>
+                                        <span id="endereco-bairro"></span> –
+                                        <span id="endereco-cidade"></span> /
+                                        <span id="endereco-estado"></span>
+                                    </p>
+                                    <p><strong>CEP:</strong> <span id="endereco-cep"></span></p>
+                                </div>
+                            </div>
                         </div>
-
                     </div>
+
                 </div>
-            </div>
 
-            <div class="card">
-                <div class="card-header fw-bold">Endereço</div>
-                <div class="card-body">
-                    <p>
-                        <span id="endereco-logradouro"></span>,
-                        <span id="endereco-numero"></span>
-                    </p>
-                    <p>
-                        <span id="endereco-bairro"></span> –
-                        <span id="endereco-cidade"></span>/<span id="endereco-estado"></span>
-                    </p>
-                    <p><strong>CEP:</strong> <span id="endereco-cep"></span></p>
+                <!-- ANAMNESES -->
+                <div class="tab-pane fade" id="anamnese">
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="fw-bold mb-0">Anamneses do Paciente</h6>
+
+                        <a href="/teamOdonto/public/index.php?page=anamnese-create&paciente_id=<?= (int)$id ?>"
+                           class="btn btn-sm btn-primary">
+                            Nova Anamnese
+                        </a>
+                    </div>
+
+                    <table class="table table-sm table-striped align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Data</th>
+                                <th>Dentista</th>
+                                <th class="text-end">Ações</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="listaAnamnesesPaciente">
+                            <tr>
+                                <td colspan="3" class="text-center text-muted">
+                                    Carregando...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
                 </div>
+
+                <!-- ORÇAMENTOS -->
+                <div class="tab-pane fade" id="orcamentos">
+                    <p class="text-muted">Nenhum orçamento encontrado.</p>
+                    <button class="btn btn-sm btn-primary">Novo Orçamento</button>
+                </div>
+
+                <!-- AGENDAMENTOS -->
+                <div class="tab-pane fade" id="agendamentos">
+                    <p class="text-muted">Nenhum agendamento futuro.</p>
+                    <button class="btn btn-sm btn-primary">Novo Agendamento</button>
+                </div>
+
+                <!-- CONSULTAS -->
+                <div class="tab-pane fade" id="consultas">
+                    <p class="text-muted">Nenhuma consulta registrada.</p>
+                </div>
+
             </div>
 
         </div>
-
-        <!-- ✅ ABA ANAMNESES (AJUSTADA) -->
-        <div class="tab-pane fade" id="anamnese">
-
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h6 class="mb-0">Anamneses do Paciente</h6>
-
-                <a href="/teamOdonto/public/index.php?page=anamnese-create&paciente_id=<?= (int)$id ?>"
-                   class="btn btn-sm btn-primary">
-                    Nova Anamnese
-                </a>
-            </div>
-
-            <table class="table table-sm table-bordered">
-                <thead>
-                    <tr>
-                        <th>Data</th>
-                        <th>Dentista</th>
-                        <th class="text-center">Ações</th>
-                    </tr>
-                </thead>
-
-                <tbody id="listaAnamnesesPaciente">
-                    <tr>
-                        <td colspan="3" class="text-center text-muted">
-                            Carregando...
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-
-        </div>
-
-        <!-- ORÇAMENTOS -->
-        <div class="tab-pane fade" id="orcamentos">
-            <p class="text-muted">Nenhum orçamento encontrado.</p>
-            <button class="btn btn-sm btn-primary">Novo Orçamento</button>
-        </div>
-
-        <!-- AGENDAMENTOS -->
-        <div class="tab-pane fade" id="agendamentos">
-            <p class="text-muted">Nenhum agendamento futuro.</p>
-            <button class="btn btn-sm btn-primary">Novo Agendamento</button>
-        </div>
-
-        <!-- CONSULTAS -->
-        <div class="tab-pane fade" id="consultas">
-            <p class="text-muted">Nenhuma consulta registrada.</p>
-        </div>
-
     </div>
 
-</div>
+</main>
 
-<!-- JS DA ABA ANAMNESES DO PACIENTE -->
 <script src="/teamOdonto/public/js/anamnese/anamnese-paciente.js"></script>
-
-<!-- JS DA VIEW DO PACIENTE -->
 <script src="/teamOdonto/public/js/paciente/paciente-view.js"></script>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
-</body>

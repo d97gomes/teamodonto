@@ -6,43 +6,77 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap 5 -->
+    <link 
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" 
+        rel="stylesheet"
+    >
 </head>
+
 <body class="bg-light">
 
 <div class="container">
-    <div class="row justify-content-center align-items-center vh-100">
-        <div class="col-md-4">
+    <div class="row justify-content-center align-items-center min-vh-100">
 
-            <div class="card shadow">
-                <div class="card-body">
+        <div class="col-11 col-sm-8 col-md-5 col-lg-4">
 
-                    <h4 class="text-center mb-4">TeamOdonto</h4>
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+
+                    <h4 class="text-center fw-bold mb-1">TeamOdonto</h4>
+                    <p class="text-center text-muted mb-4">
+                        Acesso ao sistema
+                    </p>
 
                     <!-- Mensagens -->
                     <div id="mensagem" class="alert d-none"></div>
 
-                    <form id="formLogin">
-                        <div class="mb-3">
-                            <label class="form-label">Email</label>
-                            <input type="email" name="email" class="form-control" required>
-                        </div>
+                    <form id="formLogin" novalidate>
 
                         <div class="mb-3">
-                            <label class="form-label">Senha</label>
-                            <input type="password" name="senha" class="form-control" required>
+                            <label class="form-label fw-semibold">
+                                Email
+                            </label>
+                            <input 
+                                type="email" 
+                                name="email" 
+                                class="form-control"
+                                placeholder="Digite seu email"
+                                required
+                            >
                         </div>
 
-                        <button type="submit" class="btn btn-primary w-100">
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">
+                                Senha
+                            </label>
+                            <input 
+                                type="password" 
+                                name="senha" 
+                                class="form-control"
+                                placeholder="Digite sua senha"
+                                required
+                            >
+                        </div>
+
+                        <button 
+                            type="submit" 
+                            class="btn btn-primary w-100 fw-semibold"
+                        >
                             Entrar
                         </button>
+
                     </form>
 
                 </div>
             </div>
 
+            <p class="text-center text-muted small mt-3">
+                © TeamOdonto
+            </p>
+
         </div>
+
     </div>
 </div>
 

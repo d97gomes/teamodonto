@@ -1,51 +1,64 @@
 <div class="d-flex">
 
-    <aside class="bg-light border-end" style="width:240px; min-height:100vh;">
-        <div class="list-group list-group-flush">
-            <div class="list-group-item fw-bold">Menu</div>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="py-3 px-3 fw-bold text-uppercase small text-white-50">
+            Menu
+        </div>
+
+        <nav class="nav flex-column">
 
             <a href="/teamOdonto/public/index.php?page=home"
-               class="list-group-item list-group-item-action">
+               class="nav-link">
+                <i class="bi bi-speedometer2"></i>
                 Dashboard
             </a>
 
             <a href="/teamOdonto/public/index.php?page=paciente-list"
-               class="list-group-item list-group-item-action">
+               class="nav-link">
+                <i class="bi bi-people"></i>
                 Pacientes
             </a>
 
             <a href="/teamOdonto/public/index.php?page=dentista-list"
-               class="list-group-item list-group-item-action">
+               class="nav-link">
+                <i class="bi bi-person-badge"></i>
                 Dentistas
             </a>
 
-            <!-- ✅ NOVO ITEM: ANAMNESES -->
             <a href="/teamOdonto/public/index.php?page=anamnese-list"
-               class="list-group-item list-group-item-action">
+               class="nav-link">
+                <i class="bi bi-clipboard-heart"></i>
                 Anamneses
             </a>
 
-            <!-- ✅ NOVO ITEM: procedimentos -->
             <a href="/teamOdonto/public/index.php?page=procedimento-list"
-               class="list-group-item list-group-item-action">
+               class="nav-link">
+                <i class="bi bi-tools"></i>
                 Procedimentos
             </a>
 
-           <a href="/teamOdonto/public/index.php?page=orcamento-list"
-               class="list-group-item list-group-item-action">
+            <a href="/teamOdonto/public/index.php?page=orcamento-list"
+               class="nav-link">
+                <i class="bi bi-file-earmark-text"></i>
                 Orçamentos
             </a>
-            
+
             <a href="/teamOdonto/public/index.php?page=agenda"
-               class="list-group-item list-group-item-action">
+               class="nav-link">
+                <i class="bi bi-calendar-event"></i>
                 Agenda
             </a>
 
             <a href="/teamOdonto/public/index.php?page=financeiro"
-               class="list-group-item list-group-item-action">
+               class="nav-link">
+                <i class="bi bi-cash-coin"></i>
                 Financeiro
             </a>
-        </div>
+
+        </nav>
     </aside>
 
-    <main class="flex-fill p-4">
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="main-content">

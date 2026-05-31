@@ -10,26 +10,33 @@ require_once __DIR__ . '/../includes/navbar.php';
 require_once __DIR__ . '/../includes/sidebar.php';
 ?>
 
-<div class="container-fluid py-4">
+<main class="main-content">
+    <div class="container-fluid py-4">
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h3 class="mb-0">Nova Anamnese</h3>
+        <!-- HEADER DA PÁGINA -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="mb-0 fw-bold">Nova Anamnese</h3>
 
-        <a href="/teamOdonto/public/index.php?page=anamnese-list"
-           class="btn btn-outline-secondary">
-            Voltar
-        </a>
-    </div>
+            <a href="/teamOdonto/public/index.php?page=anamnese-list"
+               class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>
+                Voltar
+            </a>
+        </div>
 
-    <div class="card">
-        <div class="card-header fw-bold">Dados da Anamnese</div>
+        <!-- CARD PRINCIPAL -->
+        <div class="card p-4">
 
-        <div class="card-body">
             <form id="formAnamnese">
 
                 <!-- =====================
                      PACIENTE / DENTISTA
                 ====================== -->
+                <div class="d-flex align-items-center mb-3">
+                    <i class="bi bi-person-lines-fill fs-5 text-primary me-2"></i>
+                    <h6 class="fw-bold mb-0">Paciente e Dentista</h6>
+                </div>
+
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Paciente *</label>
@@ -53,7 +60,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
                 <!-- =====================
                      HISTÓRICO MÉDICO
                 ====================== -->
-                <h6 class="fw-bold">Histórico Médico</h6>
+                <h6 class="fw-bold mb-3">Histórico Médico</h6>
 
                 <div class="row">
                     <div class="col-md-3 form-check">
@@ -116,7 +123,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
                 <!-- =====================
                      MEDICAMENTOS / CIRURGIAS
                 ====================== -->
-                <h6 class="fw-bold">Medicamentos e Cirurgias</h6>
+                <h6 class="fw-bold mb-3">Medicamentos e Cirurgias</h6>
 
                 <div class="row">
                     <div class="col-md-4 form-check">
@@ -130,7 +137,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
                     </div>
                 </div>
 
-                <div class="row mt-2">
+                <div class="row mt-3">
                     <div class="col-md-6">
                         <label class="form-label">Medicamentos em uso</label>
                         <input type="text" class="form-control" id="medicamentos_em_uso">
@@ -147,7 +154,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
                 <!-- =====================
                      HÁBITOS
                 ====================== -->
-                <h6 class="fw-bold">Hábitos</h6>
+                <h6 class="fw-bold mb-3">Hábitos</h6>
 
                 <div class="row">
                     <div class="col-md-3 form-check">
@@ -161,7 +168,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
                     </div>
                 </div>
 
-                <div class="row mt-2">
+                <div class="row mt-3">
                     <div class="col-md-6">
                         <label class="form-label">Tipo de Tabaco</label>
                         <input type="text" class="form-control" id="tipo_tabaco">
@@ -178,7 +185,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
                 <!-- =====================
                      HIGIENE BUCAL
                 ====================== -->
-                <h6 class="fw-bold">Higiene Bucal</h6>
+                <h6 class="fw-bold mb-3">Higiene Bucal</h6>
 
                 <div class="row">
                     <div class="col-md-4">
@@ -202,14 +209,14 @@ require_once __DIR__ . '/../includes/sidebar.php';
                 <!-- =====================
                      HISTÓRICO FAMILIAR / OBS
                 ====================== -->
-                <h6 class="fw-bold">Histórico Familiar</h6>
+                <h6 class="fw-bold mb-3">Histórico Familiar</h6>
 
                 <div class="mb-3">
                     <label class="form-label">Doenças Hereditárias</label>
                     <input type="text" class="form-control" id="doencas_hereditarias">
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-4">
                     <label class="form-label">Observações</label>
                     <textarea class="form-control" id="observacoes" rows="4"></textarea>
                 </div>
@@ -217,19 +224,22 @@ require_once __DIR__ . '/../includes/sidebar.php';
                 <!-- =====================
                      BOTÕES
                 ====================== -->
-                <button type="submit" class="btn btn-primary">
-                    Salvar Anamnese
-                </button>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save me-2"></i>
+                        Salvar Anamnese
+                    </button>
 
-                <a href="/teamOdonto/public/index.php?page=anamnese-list"
-                   class="btn btn-secondary">
-                    Cancelar
-                </a>
+                    <a href="/teamOdonto/public/index.php?page=anamnese-list"
+                       class="btn btn-secondary">
+                        Cancelar
+                    </a>
+                </div>
 
             </form>
         </div>
     </div>
-</div>
+</main>
 
 <script src="/teamOdonto/public/js/anamnese/anamnese-create.js"></script>
 
