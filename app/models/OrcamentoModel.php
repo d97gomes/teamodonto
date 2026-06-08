@@ -11,16 +11,28 @@ class OrcamentoModel
     }
 
     /**
-     * Cria um novo orçamento (cabeçalho)
+     * Cria um novo orçamento (INDEPENDENTE)
+     * Consulta é OPCIONAL
      */
-    public function criar(int $pacienteId, int $dentistaId): int|false
-    {
+    public function criar(
+        int $pacienteId,
+        int $dentistaId,
+        ?int $consultaId = null
+    ): int|false {
         $stmt = $this->db->prepare("
-            INSERT INTO orcamentos (paciente_id, dentista_id)
-            VALUES (?, ?)
+            INSERT INTO orcamentos (
+                paciente_id,
+                dentista_id,
+                consulta_id
+            )
+            VALUES (?, ?, ?)
         ");
 
-        $ok = $stmt->execute([$pacienteId, $dentistaId]);
+        $ok = $stmt->execute([
+            $pacienteId,
+            $dentistaId,
+            $consultaId
+        ]);
 
         return $ok ? (int) $this->db->lastInsertId() : false;
     }
@@ -44,7 +56,7 @@ class OrcamentoModel
     }
 
     /**
-     * Busca orçamento simples por ID (uso interno)
+     * Busca orçamento simples por ID
      */
     public function buscarPorId(int $id): array|false
     {
@@ -59,7 +71,7 @@ class OrcamentoModel
     }
 
     /**
-     * Lista orçamentos (para orcamento-list)
+     * Lista orçamentos
      */
     public function listar(): array
     {
@@ -83,31 +95,31 @@ class OrcamentoModel
     }
 
     /**
-     * Busca dados completos para o formulário (EDITAR)
-     * ✅ MÉTODO PRINCIPAL DO NOVO PADRÃO
+     * Busca dados completos para formulário (EDITAR)
      */
-public function buscarParaFormulario(int $id): array|false
-{
-    $stmt = $this->db->prepare("
-        SELECT
-            o.id,
-            o.paciente_id,
-            o.dentista_id,
-            o.status,
-            o.valor_total,
-            dp_p.nome AS paciente,
-            dp_d.nome AS dentista
-        FROM orcamentos o
-        JOIN paciente p ON p.id = o.paciente_id
-        JOIN dados_pessoais dp_p ON dp_p.id = p.dados_pessoais_id
-        JOIN dentista d ON d.id = o.dentista_id
-        JOIN dados_pessoais dp_d ON dp_d.id = d.dados_pessoais_id
-        WHERE o.id = ?
-    ");
+    public function buscarParaFormulario(int $id): array|false
+    {
+        $stmt = $this->db->prepare("
+            SELECT
+                o.id,
+                o.paciente_id,
+                o.dentista_id,
+                o.consulta_id,
+                o.status,
+                o.valor_total,
+                dp_p.nome AS paciente,
+                dp_d.nome AS dentista
+            FROM orcamentos o
+            JOIN paciente p ON p.id = o.paciente_id
+            JOIN dados_pessoais dp_p ON dp_p.id = p.dados_pessoais_id
+            JOIN dentista d ON d.id = o.dentista_id
+            JOIN dados_pessoais dp_d ON dp_d.id = d.dados_pessoais_id
+            WHERE o.id = ?
+        ");
 
-    $stmt->execute([$id]);
-    return $stmt->fetch(PDO::FETCH_ASSOC);
-}
+        $stmt->execute([$id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 
     /**
      * Atualiza status do orçamento
@@ -135,6 +147,4 @@ public function buscarParaFormulario(int $id): array|false
 
         return $stmt->execute([$id]);
     }
-
-    
 }

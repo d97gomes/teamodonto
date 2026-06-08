@@ -1,82 +1,80 @@
 <?php
-
 require_once __DIR__ . '/../models/ConsultaModel.php';
 require_once __DIR__ . '/../models/AgendaModel.php';
+require_once __DIR__ . '/../models/AnamneseModel.php';
 
 class ConsultaController
 {
-    private ConsultaModel $consulta;
-    private AgendaModel $agenda;
+    private ConsultaModel $consultaModel;
+    private AgendaModel $agendaModel;
+    private AnamneseModel $anamneseModel;
 
-    public function __construct(PDO $pdo)
+    public function __construct()
     {
-        $this->consulta = new ConsultaModel($pdo);
-        $this->agenda   = new AgendaModel($pdo);
+        $this->consultaModel = new ConsultaModel();
+        $this->agendaModel   = new AgendaModel();
+        $this->anamneseModel = new AnamneseModel();
     }
 
-    public function showByAgenda(int $agendaId): array
+    /* ========= ABRIR CONSULTA ========= */
+    public function abrir(int $agendaId): int|false
     {
-        $consulta = $this->consulta->buscarPorAgenda($agendaId);
-
-        return $consulta ?: [];
-    }
-
-    public function store(): array
-    {
-        $dados = json_decode(file_get_contents("php://input"), true);
-
-        if (empty($dados['agenda_id'])) {
-            return [
-                'success' => false,
-                'message' => 'Agenda não informada'
-            ];
-        }
-
-        $agenda = $this->agenda->buscarPorId((int) $dados['agenda_id']);
+        // Busca dados do agendamento
+        $agenda = $this->agendaModel->buscarPorId($agendaId);
 
         if (!$agenda) {
-            return [
-                'success' => false,
-                'message' => 'Agenda não encontrada'
-            ];
+            return false;
         }
 
-        $this->agenda->atualizarStatus(
-            (int) $dados['agenda_id'],
-            'em_atendimento'
-        );
+        // Verifica se já existe consulta
+        $consulta = $this->consultaModel->buscarPorAgenda($agendaId);
 
-        return [
-            'success' => $this->consulta->criar(
-                (int) $dados['agenda_id']
-            )
-        ];
+        if ($consulta) {
+            return (int) $consulta['id'];
+        }
+
+        // Cria nova consulta
+        return $this->consultaModel->criar(
+            $agendaId,
+            $agenda['paciente_id'],
+            $agenda['dentista_id']
+        );
     }
 
-    public function finalizar(): array
+    /* ========= FINALIZAR CONSULTA ========= */
+    public function finalizar(int $agendaId, string $evolucao): bool
     {
-        $dados = json_decode(file_get_contents("php://input"), true);
+        $ok = $this->consultaModel->finalizar($agendaId, $evolucao);
 
-        if (
-            empty($dados['consulta_id']) ||
-            empty($dados['agenda_id'])
-        ) {
-            return [
-                'success' => false,
-                'message' => 'Dados inválidos'
-            ];
+        if (!$ok) {
+            return false;
         }
 
-        $this->consulta->finalizar(
-            (int) $dados['consulta_id'],
-            $dados['evolucao'] ?? ''
+        // Atualiza status da agenda
+        return $this->agendaModel->atualizarStatus(
+            $agendaId,
+            'concluido'
         );
-
-        $this->agenda->atualizarStatus(
-            (int) $dados['agenda_id'],
-            'concluida'
-        );
-
-        return ['success' => true];
     }
+
+    /* ========= BUSCAR CONSULTA POR AGENDA (EDITAR) ========= */
+    public function buscarPorAgenda(int $agendaId): ?array
+    {
+        return $this->consultaModel->buscarPorAgenda($agendaId);
+    }
+
+    /* ========= ALERTAS DA ANAMNESE ========= */
+    public function alertasAnamnese(int $agendaId): array
+    {
+        $agenda = $this->agendaModel->buscarPorId($agendaId);
+
+        if (!$agenda) {
+            return [];
+        }
+
+        return $this->anamneseModel
+            ->listarAlertasPorPaciente($agenda['paciente_id']);
+    }
+
+
 }

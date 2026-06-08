@@ -24,8 +24,8 @@ class OrcamentoItemController
             !$dados ||
             empty($dados['orcamento_id']) ||
             empty($dados['procedimento_id']) ||
-            empty($dados['dente']) ||
-            empty($dados['face'])
+            !isset($dados['dente']) ||
+            !isset($dados['face'])
         ) {
             return [
                 'success' => false,
@@ -36,7 +36,7 @@ class OrcamentoItemController
         $ok = $this->itemModel->adicionar(
             (int) $dados['orcamento_id'],
             (int) $dados['procedimento_id'],
-            (int) $dados['dente'],
+            (string) $dados['dente'],
             strtoupper($dados['face'])
         );
 

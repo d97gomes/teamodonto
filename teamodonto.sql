@@ -199,8 +199,6 @@ CREATE TABLE agenda (
     data DATE NOT NULL,
     hora TIME NOT NULL,
 
-    sala_id INT NOT NULL,
-
     status ENUM(
         'pendente',
         'confirmado',
@@ -212,24 +210,28 @@ CREATE TABLE agenda (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE sala (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nome VARCHAR(50) NOT NULL,
-    ativo TINYINT(1) DEFAULT 1
-);
-
-CREATE TABLE consulta (
+CREATE TABLE consultas (
     id INT AUTO_INCREMENT PRIMARY KEY,
 
+    agenda_id INT NOT NULL,
     paciente_id INT NOT NULL,
+    dentista_id INT NOT NULL,
 
-    agenda_id INT NULL,
+    data_inicio DATETIME NOT NULL,
+    data_fim DATETIME DEFAULT NULL,
 
-    data_atendimento DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    evolucao TEXT,
 
-    evolucao TEXT NOT NULL,
+    status ENUM('em_atendimento', 'finalizada') DEFAULT 'em_atendimento',
 
-    observacoes TEXT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    CONSTRAINT fk_consulta_agenda
+        FOREIGN KEY (agenda_id) REFERENCES agenda(id),
+
+    CONSTRAINT fk_consulta_paciente
+        FOREIGN KEY (paciente_id) REFERENCES paciente(id),
+
+    CONSTRAINT fk_consulta_dentista
+        FOREIGN KEY (dentista_id) REFERENCES dentista(id)
 );

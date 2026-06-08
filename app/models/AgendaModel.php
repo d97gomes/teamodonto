@@ -114,4 +114,16 @@ class AgendaModel
         ");
         return $stmt->execute([$status, $id]);
     }
+
+    public function buscarPorId(int $id): ?array
+{
+    $stmt = $this->db->prepare("
+        SELECT * FROM agenda WHERE id = ?
+    ");
+    $stmt->execute([$id]);
+    $agenda = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    return $agenda ?: null;
+}
+
 }

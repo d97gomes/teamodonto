@@ -19,37 +19,69 @@ require_once __DIR__ . '/../includes/sidebar.php';
                 <div class="card p-4 border-0 shadow-sm">
                     <h5 class="fw-bold mb-4">Novo Agendamento</h5>
 
-                    <form id="agendaCreateForm">
+                    <!-- ✅ FORM EXPLÍCITO -->
+                    <form id="agendaCreateForm"
+                          method="post"
+                          action="/teamOdonto/public/api.php?api=agenda">
 
                         <!-- BUSCA PACIENTE -->
                         <div class="mb-3">
                             <label class="form-label small fw-bold">Paciente</label>
-                            <input type="text" class="form-control" id="buscaPaciente" placeholder="Buscar paciente..." autocomplete="off">
-                            <div class="list-group mt-1 d-none" id="listaPacientes"></div>
-                            <input type="hidden" id="paciente_id">
+                            <input type="text"
+                                   class="form-control"
+                                   id="buscaPaciente"
+                                   placeholder="Buscar paciente..."
+                                   autocomplete="off">
+                            <div class="list-group mt-1 d-none"
+                                 id="listaPacientes"></div>
+
+                            <!-- ✅ name definido -->
+                            <input type="hidden"
+                                   id="paciente_id"
+                                   name="paciente_id"
+                                   required>
                         </div>
 
                         <!-- BUSCA DENTISTA -->
                         <div class="mb-3">
                             <label class="form-label small fw-bold">Dentista</label>
-                            <input type="text" class="form-control" id="buscaDentista" placeholder="Buscar dentista..." autocomplete="off">
-                            <div class="list-group mt-1 d-none" id="listaDentistas"></div>
-                            <input type="hidden" id="dentista_id">
+                            <input type="text"
+                                   class="form-control"
+                                   id="buscaDentista"
+                                   placeholder="Buscar dentista..."
+                                   autocomplete="off">
+                            <div class="list-group mt-1 d-none"
+                                 id="listaDentistas"></div>
+
+                            <!-- ✅ name definido -->
+                            <input type="hidden"
+                                   id="dentista_id"
+                                   name="dentista_id"
+                                   required>
                         </div>
 
                         <!-- DATA -->
                         <div class="mb-3">
                             <label class="form-label small fw-bold">Data</label>
-                            <input type="date" class="form-control" id="data" required>
+                            <input type="date"
+                                   class="form-control"
+                                   id="data"
+                                   name="data"
+                                   required>
                         </div>
 
                         <!-- HORA -->
                         <div class="mb-3">
                             <label class="form-label small fw-bold">Hora</label>
-                            <input type="time" class="form-control" id="hora" required>
+                            <input type="time"
+                                   class="form-control"
+                                   id="hora"
+                                   name="hora"
+                                   required>
                         </div>
 
-                        <button type="submit" class="btn btn-primary w-100 fw-bold">
+                        <button type="submit"
+                                class="btn btn-primary w-100 fw-bold">
                             Solicitar Agendamento
                         </button>
                     </form>
@@ -63,6 +95,5 @@ require_once __DIR__ . '/../includes/sidebar.php';
 </main>
 
 <script src="/teamOdonto/public/js/agenda/agenda-create.js"></script>
+
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
-
-

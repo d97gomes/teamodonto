@@ -10,75 +10,81 @@ class AgendaController
         $this->model = new AgendaModel();
     }
 
-public function store(): array
-{
-    $dados = json_decode(file_get_contents('php://input'), true);
+    /* ========= CREATE ========= */
+    public function store(): array
+    {
+        // ✅ LÊ FORM DATA CORRETAMENTE
+        $pacienteId = $_POST['paciente_id'] ?? null;
+        $dentistaId = $_POST['dentista_id'] ?? null;
+        $data       = $_POST['data_agenda'] ?? null;
+        $hora       = $_POST['hora_agenda'] ?? null;
 
-    if (
-        empty($dados['paciente_id']) ||
-        empty($dados['dentista_id']) ||
-        empty($dados['data']) ||
-        empty($dados['hora'])
-        
-    ) {
+        if (!$pacienteId || !$dentistaId || !$data || !$hora) {
+            return [
+                'success' => false,
+                'message' => 'Selecione paciente, dentista, data e hora.'
+            ];
+        }
+
+        $ok = $this->model->criar([
+            'paciente_id' => (int) $pacienteId,
+            'dentista_id' => (int) $dentistaId,
+            'data'        => $data,
+            'hora'        => $hora
+        ]);
+
         return [
-            'success' => false,
-            'message' => 'Selecione paciente, dentista, data e hora.'
+            'success' => $ok
         ];
     }
 
-    return [
-        'success' => $this->model->criar($dados)
-    ];
-}
-
+    /* ========= READ ========= */
     public function index(): array
-{
-    $tipo = $_GET['tipo'] ?? 'dia';
-    $data = $_GET['data'] ?? date('Y-m-d');
+    {
+        $tipo = $_GET['tipo'] ?? 'dia';
+        $data = $_GET['data'] ?? date('Y-m-d');
 
-    return [
-        'success' => true,
-        'data' => $this->model->listar($tipo, $data)
-    ];
-}
+        return [
+            'success' => true,
+            'data' => $this->model->listar($tipo, $data)
+        ];
+    }
 
-
+    /* ========= UPDATE STATUS ========= */
     public function updateStatus(): array
-{
-    $dados = json_decode(file_get_contents('php://input'), true);
+    {
+        // ✅ AQUI SIM É JSON
+        $dados = json_decode(file_get_contents('php://input'), true);
 
-    if (
-        empty($dados['id']) ||
-        empty($dados['status'])
-    ) {
+        if (
+            empty($dados['id']) ||
+            empty($dados['status'])
+        ) {
+            return [
+                'success' => false,
+                'message' => 'Dados inválidos'
+            ];
+        }
+
+        $statusPermitidos = [
+            'confirmado',
+            'em_atendimento',
+            'concluido',
+            'cancelado'
+        ];
+
+        if (!in_array($dados['status'], $statusPermitidos)) {
+            return [
+                'success' => false,
+                'message' => 'Status inválido'
+            ];
+        }
+
         return [
-            'success' => false,
-            'message' => 'Dados inválidos'
+            'success' => $this->model->atualizarStatus(
+                (int) $dados['id'],
+                $dados['status']
+            )
         ];
     }
-
-    $statusPermitidos = [
-        'confirmado',
-        'em_atendimento',
-        'concluido',
-        'cancelado'
-    ];
-
-    if (!in_array($dados['status'], $statusPermitidos)) {
-        return [
-            'success' => false,
-            'message' => 'Status inválido'
-        ];
-    }
-
-    return [
-        'success' => $this->model->atualizarStatus(
-            (int) $dados['id'],
-            $dados['status']
-        )
-    ];
-}
-
-    
 }

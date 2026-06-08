@@ -227,4 +227,29 @@ class AnamneseModel
         ");
         return $stmt->execute([$id]);
     }
+
+public function listarAlertasPorPaciente(int $pacienteId): array
+{
+    $stmt = $this->db->prepare("
+        SELECT alerta FROM (
+            SELECT alergias AS alerta
+            FROM anamneses
+            WHERE paciente_id = ?
+              AND alergias IS NOT NULL
+              AND alergias <> ''
+
+            UNION ALL
+
+            SELECT outras_doencas AS alerta
+            FROM anamneses
+            WHERE paciente_id = ?
+              AND outras_doencas IS NOT NULL
+              AND outras_doencas <> ''
+        ) t
+    ");
+
+    $stmt->execute([$pacienteId, $pacienteId]);
+    return $stmt->fetchAll(PDO::FETCH_COLUMN);
+}
+
 }

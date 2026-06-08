@@ -107,12 +107,16 @@ switch ($pagina) {
         break;
 
     case 'agenda':
-    require '../app/views/agenda/agendaList.php';
-    break;
+        require '../app/views/agenda/agendaList.php';
+        break;
 
-        case 'agenda-create':
-    require '../app/views/agenda/agendaCreate.php';
-    break;
+    case 'agenda-create':
+        require '../app/views/agenda/agendaCreate.php';
+        break;
+
+    case 'consulta-view':
+        require '../app/views/consulta/consultaView.php';
+        break;    
 
 
     default:
