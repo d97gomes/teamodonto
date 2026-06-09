@@ -19,21 +19,18 @@ class ConsultaController
     /* ========= ABRIR CONSULTA ========= */
     public function abrir(int $agendaId): int|false
     {
-        // Busca dados do agendamento
         $agenda = $this->agendaModel->buscarPorId($agendaId);
 
         if (!$agenda) {
             return false;
         }
 
-        // Verifica se já existe consulta
         $consulta = $this->consultaModel->buscarPorAgenda($agendaId);
 
         if ($consulta) {
             return (int) $consulta['id'];
         }
 
-        // Cria nova consulta
         return $this->consultaModel->criar(
             $agendaId,
             $agenda['paciente_id'],
@@ -50,14 +47,13 @@ class ConsultaController
             return false;
         }
 
-        // Atualiza status da agenda
         return $this->agendaModel->atualizarStatus(
             $agendaId,
             'concluido'
         );
     }
 
-    /* ========= BUSCAR CONSULTA POR AGENDA (EDITAR) ========= */
+    /* ========= BUSCAR CONSULTA POR AGENDA ========= */
     public function buscarPorAgenda(int $agendaId): ?array
     {
         return $this->consultaModel->buscarPorAgenda($agendaId);
@@ -76,5 +72,12 @@ class ConsultaController
             ->listarAlertasPorPaciente($agenda['paciente_id']);
     }
 
-
+    /* ========= LISTAR CONSULTAS (AJAX) ========= */
+    public function listarAjax(): array
+    {
+        return [
+            'success' => true,
+            'data' => $this->consultaModel->listar()
+        ];
+    }
 }

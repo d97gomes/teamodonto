@@ -14,11 +14,12 @@ require_once __DIR__ . '/../app/controllers/OrcamentoController.php';
 require_once __DIR__ . '/../app/controllers/OrcamentoItemController.php';
 require_once __DIR__ . '/../app/controllers/AgendaController.php';
 require_once __DIR__ . '/../app/controllers/ConsultaController.php';
-
+require_once __DIR__ . '/../app/controllers/UsuarioController.php';
 /* ======================
    INSTÂNCIAS
 ====================== */
 
+$usuarioController = new UsuarioController();
 $authController          = new AuthController();
 $pacienteController      = new PacienteController();
 $dentistaController      = new DentistaController();
@@ -28,6 +29,7 @@ $orcamentoController     = new OrcamentoController();
 $orcamentoItemController = new OrcamentoItemController();
 $agendaController        = new AgendaController();
 $consultaController      = new ConsultaController();
+
 
 $api    = $_GET['api'] ?? null;
 $method = $_SERVER['REQUEST_METHOD'];
@@ -58,6 +60,16 @@ if ($api === 'logout') {
     header('Location: /teamOdonto/public/index.php?page=login');
     exit;
 }
+
+/* ======================
+   CADASTRO PÚBLICO
+====================== */
+
+if ($api === 'usuario-publico' && $method === 'POST') {
+    $usuarioController->storePublico();
+    exit;
+}
+
 
 /* ======================
    PROTEÇÃO GLOBAL
