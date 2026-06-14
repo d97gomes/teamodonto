@@ -3,6 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('formPaciente');
     if (!form) return;
 
+    const btnSubmit = form.querySelector('button[type="submit"]');
+
     form.addEventListener('submit', e => {
         e.preventDefault();
 
@@ -10,22 +12,66 @@ document.addEventListener('DOMContentLoaded', () => {
             new FormData(form)
         );
 
+        /* =========================
+           LOADING BOTÃO
+        ========================= */
+        btnSubmit.disabled = true;
+        btnSubmit.innerHTML = `
+            <span class="spinner-border spinner-border-sm me-1"></span>
+            Salvando...
+        `;
+
         axios
             .post('/teamOdonto/public/api.php?api=pacientes', dados)
             .then(response => {
 
                 if (response.data.success) {
-                    alert('Paciente cadastrado com sucesso!');
-                    window.location.href =
-                        '/teamOdonto/public/index.php?page=paciente-list';
+
+                    mostrarMensagem('Paciente cadastrado com sucesso ✅', 'success');
+
+                    setTimeout(() => {
+                        window.location.href =
+                            '/teamOdonto/public/index.php?page=paciente-list';
+                    }, 1200);
+
                 } else {
-                    alert('Erro ao cadastrar paciente.');
+                    mostrarMensagem('Erro ao cadastrar paciente ❌', 'danger');
                 }
+
             })
             .catch(error => {
                 console.error(error);
-                alert('Erro de comunicação com o servidor.');
+                mostrarMensagem('Erro de comunicação com o servidor ❌', 'danger');
+            })
+            .finally(() => {
+
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = 'Salvar';
+
             });
     });
+
+    /* =========================
+       ALERTA PADRÃO 🔥
+    ========================= */
+    function mostrarMensagem(texto, tipo = 'success') {
+
+        let alerta = document.getElementById('alertaSistema');
+
+        if (!alerta) {
+            alerta = document.createElement('div');
+            alerta.id = 'alertaSistema';
+            alerta.className = `alert alert-${tipo} mt-3`;
+
+            form.prepend(alerta);
+        }
+
+        alerta.className = `alert alert-${tipo} mt-3`;
+        alerta.innerHTML = texto;
+
+        setTimeout(() => {
+            alerta.remove();
+        }, 3000);
+    }
 
 });

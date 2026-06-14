@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!Array.isArray(dentistas) || dentistas.length === 0) {
                     tbody.innerHTML = `
                         <tr>
-                            <td colspan="7" class="text-center text-muted">
+                            <td colspan="7" class="text-center text-muted py-4">
                                 Nenhum dentista encontrado.
                             </td>
                         </tr>
@@ -33,26 +33,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     tr.innerHTML = `
                         <td>${d.id}</td>
+
                         <td>${d.nome}</td>
+
                         <td>${d.cpf}</td>
-                        <td>${d.telefone ?? ''}</td>
-                        <td>${d.cro}</td>
-                        <td>${d.especialidade}</td>
+
+                        <td>${d.telefone ?? '-'}</td>
+
+                        <td class="fw-bold">${d.cro}</td>
+
+                        <td>${d.especialidade ?? '-'}</td>
+
+                        <!-- ✅ AÇÕES PADRONIZADAS -->
                         <td class="text-center">
-                            <a href="/teamOdonto/public/index.php?page=dentista-view&id=${d.id}"
-                               class="btn btn-sm btn-info me-1">
-                                Ver
-                            </a>
+                            <div class="d-flex justify-content-center gap-2">
 
-                            <a href="/teamOdonto/public/index.php?page=dentista-edit&id=${d.id}"
-                               class="btn btn-sm btn-warning me-1">
-                                Editar
-                            </a>
+                                <a href="/teamOdonto/public/index.php?page=dentista-view&id=${d.id}"
+                                   class="btn btn-sm btn-outline-info"
+                                   title="Visualizar">
+                                    <i class="bi bi-eye"></i>
+                                </a>
 
-                            <button class="btn btn-sm btn-danger btn-excluir"
-                                    data-id="${d.id}">
-                                Excluir
-                            </button>
+                                <a href="/teamOdonto/public/index.php?page=dentista-edit&id=${d.id}"
+                                   class="btn btn-sm btn-outline-warning"
+                                   title="Editar">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+
+                                <button class="btn btn-sm btn-outline-danger btn-excluir"
+                                        data-id="${d.id}"
+                                        title="Excluir">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+
+                            </div>
                         </td>
                     `;
 
@@ -65,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error(error);
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="7" class="text-center text-danger">
+                        <td colspan="7" class="text-center text-danger py-4">
                             Erro ao carregar dentistas.
                         </td>
                     </tr>

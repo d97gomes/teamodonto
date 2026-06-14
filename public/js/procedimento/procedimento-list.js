@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!dados.length) {
                     tabela.innerHTML = `
                         <tr>
-                            <td colspan="3" class="text-center">
+                            <td colspan="3" class="text-center text-muted py-4">
                                 Nenhum procedimento cadastrado
                             </td>
                         </tr>
@@ -38,17 +38,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     tr.innerHTML = `
                         <td>${proc.nome}</td>
-                        <td>R$ ${Number(proc.valor).toFixed(2)}</td>
-                        <td>
-                            <a href="index.php?page=procedimento-edit&id=${proc.id}"
-                               class="btn btn-sm btn-warning me-1">
-                                Editar
-                            </a>
 
-                            <button class="btn btn-sm btn-danger btn-excluir"
-                                    data-id="${proc.id}">
-                                Excluir
-                            </button>
+                        <td class="fw-bold">
+                            R$ ${Number(proc.valor).toFixed(2).replace('.', ',')}
+                        </td>
+
+                        <!-- ✅ COLUNA AÇÕES PADRÃO -->
+                        <td class="text-center">
+                            <div class="d-flex justify-content-center gap-2">
+
+                                <a href="index.php?page=procedimento-edit&id=${proc.id}"
+                                   class="btn btn-sm btn-outline-warning">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+
+                                <button class="btn btn-sm btn-outline-danger btn-excluir"
+                                        data-id="${proc.id}">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+
+                            </div>
                         </td>
                     `;
 
@@ -61,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error(error);
                 tabela.innerHTML = `
                     <tr>
-                        <td colspan="3" class="text-center text-danger">
+                        <td colspan="3" class="text-center text-danger py-4">
                             Erro ao carregar procedimentos
                         </td>
                     </tr>

@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const id = params.get('id');
 
     if (!id) {
-        alert('Dentista não informado.');
+        mostrarMensagem('Dentista não informado ❌', 'danger');
         return;
     }
 
@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* =========================
-   CARREGAR DENTISTA (VIEW)
+   CARREGAR DENTISTA
 ========================= */
 function carregarDentista(id) {
 
@@ -21,61 +21,84 @@ function carregarDentista(id) {
         .then(response => {
 
             const d = response.data;
-            console.log('DADOS DO DENTISTA:', d);
 
             if (!d) {
-                alert('Dentista não encontrado.');
+                mostrarMensagem('Dentista não encontrado ❌', 'danger');
                 return;
             }
 
-            // TÍTULO
+            /* ===== TÍTULO ===== */
             document.getElementById('dentista-nome-titulo').innerText =
-                d.nome ?? '';
+                d.nome ?? '-';
 
-            // DADOS PESSOAIS
+            /* ===== DADOS PESSOAIS ===== */
             document.getElementById('dentista-nome').innerText =
-                d.nome ?? '';
+                d.nome ?? '-';
 
             document.getElementById('dentista-cpf').innerText =
-                d.cpf ?? '';
+                d.cpf ?? '-';
 
             document.getElementById('dentista-telefone').innerText =
-                d.telefone ?? '';
+                d.telefone ?? '-';
 
             document.getElementById('dentista-email').innerText =
-                d.email ?? '';
+                d.email ?? '-';
 
             document.getElementById('dentista-sexo').innerText =
-                d.sexo ?? '';
+                d.sexo ?? '-';
 
-            // DADOS PROFISSIONAIS
+            /* ===== DADOS PROFISSIONAIS ===== */
             document.getElementById('dentista-cro').innerText =
-                d.cro ?? '';
+                d.cro ?? '-';
 
             document.getElementById('dentista-especialidade').innerText =
-                d.especialidade ?? '';
+                d.especialidade ?? '-';
 
-            // ENDEREÇO (VINDO DO JOIN)
+            /* ===== ENDEREÇO ===== */
             document.getElementById('endereco-logradouro').innerText =
-                d.logradouro ?? '';
+                d.logradouro ?? '-';
 
             document.getElementById('endereco-numero').innerText =
-                d.numero ?? '';
+                d.numero ?? '-';
 
             document.getElementById('endereco-bairro').innerText =
-                d.bairro ?? '';
+                d.bairro ?? '-';
 
             document.getElementById('endereco-cidade').innerText =
-                d.cidade ?? '';
+                d.cidade ?? '-';
 
             document.getElementById('endereco-estado').innerText =
-                d.estado ?? '';
+                d.estado ?? '-';
 
             document.getElementById('endereco-cep').innerText =
-                d.cep ?? '';
+                d.cep ?? '-';
+
         })
         .catch(error => {
             console.error(error);
-            alert('Erro ao carregar dados do dentista.');
+            mostrarMensagem('Erro ao carregar dados do dentista ❌', 'danger');
         });
+}
+
+/* =========================
+   ALERTA PADRÃO 🔥
+========================= */
+function mostrarMensagem(texto, tipo = 'success') {
+
+    let alerta = document.getElementById('alertaSistema');
+
+    if (!alerta) {
+        alerta = document.createElement('div');
+        alerta.id = 'alertaSistema';
+        alerta.className = `alert alert-${tipo} mt-3`;
+
+        document.querySelector('.main-content')?.prepend(alerta);
+    }
+
+    alerta.className = `alert alert-${tipo} mt-3`;
+    alerta.innerHTML = texto;
+
+    setTimeout(() => {
+        alerta.remove();
+    }, 3000);
 }

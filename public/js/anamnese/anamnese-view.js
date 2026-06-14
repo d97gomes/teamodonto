@@ -7,13 +7,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const id = params.get('id');
 
     if (!id) {
-        container.innerHTML =
-            '<p class="text-danger">Anamnese não encontrada.</p>';
+        container.innerHTML = `
+            <div class="alert alert-danger text-center">
+                Anamnese não encontrada ❌
+            </div>
+        `;
         return;
     }
 
     /* =========================
-       CARREGAR ANAMNESE (VIEW)
+       CARREGAR ANAMNESE
     ========================= */
     axios
         .get(`/teamOdonto/public/api.php?api=anamneses&id=${id}`)
@@ -21,62 +24,112 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const a = res.data;
 
+            if (!a) {
+                container.innerHTML = `
+                    <div class="alert alert-danger text-center">
+                        Anamnese não encontrada ❌
+                    </div>
+                `;
+                return;
+            }
+
             container.innerHTML = `
-                <h6 class="fw-bold">Histórico Médico</h6>
-                <ul>
-                    <li>Diabetes: ${a.diabetes ? 'Sim' : 'Não'}</li>
-                    <li>Hipertensão: ${a.hipertensao ? 'Sim' : 'Não'}</li>
-                    <li>Problemas Cardíacos: ${a.problemas_cardiacos ? 'Sim' : 'Não'}</li>
-                    <li>Problemas Respiratórios: ${a.problemas_respiratorios ? 'Sim' : 'Não'}</li>
-                    <li>Doenças Infecciosas: ${a.doencas_infecciosas ? 'Sim' : 'Não'}</li>
-                    <li>Doenças Ósseas: ${a.doencas_osseas ? 'Sim' : 'Não'}</li>
-                    <li>Câncer: ${a.cancer ? 'Sim' : 'Não'}</li>
-                    <li>Convulsões: ${a.convulsoes ? 'Sim' : 'Não'}</li>
-                </ul>
+                <div class="row g-3">
 
-                <hr>
+                    <!-- HISTÓRICO MÉDICO -->
+                    <div class="col-md-6">
+                        <div class="card shadow-sm p-3">
+                            <h6 class="fw-bold mb-3">Histórico Médico</h6>
+                            <ul class="mb-0">
+                                <li>Diabetes: ${bool(a.diabetes)}</li>
+                                <li>Hipertensão: ${bool(a.hipertensao)}</li>
+                                <li>Cardíacos: ${bool(a.problemas_cardiacos)}</li>
+                                <li>Respiratórios: ${bool(a.problemas_respiratorios)}</li>
+                                <li>Infecciosas: ${bool(a.doencas_infecciosas)}</li>
+                                <li>Ósseas: ${bool(a.doencas_osseas)}</li>
+                                <li>Câncer: ${bool(a.cancer)}</li>
+                                <li>Convulsões: ${bool(a.convulsoes)}</li>
+                            </ul>
+                        </div>
+                    </div>
 
-                <h6 class="fw-bold">Medicamentos e Cirurgias</h6>
-                <ul>
-                    <li>Em tratamento médico: ${a.em_tratamento_medico ? 'Sim' : 'Não'}</li>
-                    <li>Medicamentos em uso: ${a.medicamentos_em_uso || '-'}</li>
-                    <li>Hospitalizado/Operado: ${a.hospitalizado_ou_operado ? 'Sim' : 'Não'}</li>
-                    <li>Detalhes das cirurgias: ${a.detalhes_cirurgias || '-'}</li>
-                </ul>
+                    <!-- MEDICAMENTOS -->
+                    <div class="col-md-6">
+                        <div class="card shadow-sm p-3">
+                            <h6 class="fw-bold mb-3">Medicamentos e Cirurgias</h6>
+                            <ul class="mb-0">
+                                <li>Tratamento médico: ${bool(a.em_tratamento_medico)}</li>
+                                <li>Medicamentos: ${txt(a.medicamentos_em_uso)}</li>
+                                <li>Hospitalizado: ${bool(a.hospitalizado_ou_operado)}</li>
+                                <li>Cirurgias: ${txt(a.detalhes_cirurgias)}</li>
+                            </ul>
+                        </div>
+                    </div>
 
-                <hr>
+                    <!-- HÁBITOS -->
+                    <div class="col-md-6">
+                        <div class="card shadow-sm p-3">
+                            <h6 class="fw-bold mb-3">Hábitos</h6>
+                            <ul class="mb-0">
+                                <li>Tabagista: ${bool(a.tabagista)}</li>
+                                <li>Tipo: ${txt(a.tipo_tabaco)}</li>
+                                <li>Álcool: ${bool(a.consumo_alcool)}</li>
+                                <li>Frequência: ${txt(a.frequencia_alcool)}</li>
+                            </ul>
+                        </div>
+                    </div>
 
-                <h6 class="fw-bold">Hábitos</h6>
-                <ul>
-                    <li>Tabagista: ${a.tabagista ? 'Sim' : 'Não'}</li>
-                    <li>Tipo de tabaco: ${a.tipo_tabaco || '-'}</li>
-                    <li>Consumo de álcool: ${a.consumo_alcool ? 'Sim' : 'Não'}</li>
-                    <li>Frequência de álcool: ${a.frequencia_alcool || '-'}</li>
-                </ul>
+                    <!-- HIGIENE -->
+                    <div class="col-md-6">
+                        <div class="card shadow-sm p-3">
+                            <h6 class="fw-bold mb-3">Higiene Bucal</h6>
+                            <ul class="mb-0">
+                                <li>Escovações por dia: ${a.escovacoes_por_dia ?? 0}</li>
+                                <li>Fio dental: ${bool(a.usa_fio_dental)}</li>
+                                <li>Bruxismo: ${bool(a.bruxismo)}</li>
+                            </ul>
+                        </div>
+                    </div>
 
-                <hr>
+                    <!-- HISTÓRICO FAMILIAR -->
+                    <div class="col-md-12">
+                        <div class="card shadow-sm p-3">
+                            <h6 class="fw-bold mb-3">Histórico Familiar</h6>
+                            <p class="mb-0">${txt(a.doencas_hereditarias)}</p>
+                        </div>
+                    </div>
 
-                <h6 class="fw-bold">Higiene Bucal</h6>
-                <ul>
-                    <li>Escovações por dia: ${a.escovacoes_por_dia}</li>
-                    <li>Usa fio dental: ${a.usa_fio_dental ? 'Sim' : 'Não'}</li>
-                    <li>Bruxismo: ${a.bruxismo ? 'Sim' : 'Não'}</li>
-                </ul>
+                    <!-- OBSERVAÇÕES -->
+                    <div class="col-md-12">
+                        <div class="card shadow-sm p-3">
+                            <h6 class="fw-bold mb-3">Observações</h6>
+                            <p class="mb-0">${txt(a.observacoes)}</p>
+                        </div>
+                    </div>
 
-                <hr>
-
-                <h6 class="fw-bold">Histórico Familiar</h6>
-                <p>${a.doencas_hereditarias || '-'}</p>
-
-                <hr>
-
-                <h6 class="fw-bold">Observações</h6>
-                <p>${a.observacoes || '-'}</p>
+                </div>
             `;
+
         })
         .catch(() => {
-            container.innerHTML =
-                '<p class="text-danger">Erro ao carregar anamnese.</p>';
+            container.innerHTML = `
+                <div class="alert alert-danger text-center">
+                    Erro ao carregar anamnese ❌
+                </div>
+            `;
         });
 
 });
+
+/* =========================
+   HELPERS 🔥
+========================= */
+function bool(valor) {
+    return valor
+        ? '<span class="text-success fw-bold">Sim</span>'
+        : '<span class="text-muted">Não</span>';
+}
+
+function txt(valor) {
+    return valor || '-';
+}

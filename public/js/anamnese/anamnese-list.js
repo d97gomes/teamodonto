@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!dados || dados.length === 0) {
                     tbody.innerHTML = `
                         <tr>
-                            <td colspan="4" class="text-center text-muted">
+                            <td colspan="4" class="text-center text-muted py-4">
                                 Nenhuma anamnese encontrada.
                             </td>
                         </tr>
@@ -39,23 +39,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     tr.innerHTML = `
                         <td>${formatarData(a.data_registro)}</td>
+
                         <td>${a.paciente_nome}</td>
+
                         <td>${a.dentista_nome}</td>
+
+                        <!-- ✅ AÇÕES PADRONIZADAS -->
                         <td class="text-center">
-                            <a href="/teamOdonto/public/index.php?page=anamnese-view&id=${a.id}"
-                               class="btn btn-sm btn-info me-1">
-                                Ver
-                            </a>
+                            <div class="d-flex justify-content-center gap-2">
 
-                            <a href="/teamOdonto/public/index.php?page=anamnese-edit&id=${a.id}"
-                               class="btn btn-sm btn-warning me-1">
-                                Editar
-                            </a>
+                                <a href="/teamOdonto/public/index.php?page=anamnese-view&id=${a.id}"
+                                   class="btn btn-sm btn-outline-info"
+                                   title="Visualizar">
+                                    <i class="bi bi-eye"></i>
+                                </a>
 
-                            <button class="btn btn-sm btn-danger btn-excluir"
-                                    data-id="${a.id}">
-                                Excluir
-                            </button>
+                                <a href="/teamOdonto/public/index.php?page=anamnese-edit&id=${a.id}"
+                                   class="btn btn-sm btn-outline-warning"
+                                   title="Editar">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+
+                                <button class="btn btn-sm btn-outline-danger btn-excluir"
+                                        data-id="${a.id}"
+                                        title="Excluir">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+
+                            </div>
                         </td>
                     `;
 
@@ -69,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error(error);
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="4" class="text-center text-danger">
+                        <td colspan="4" class="text-center text-danger py-4">
                             Erro ao carregar anamneses.
                         </td>
                     </tr>
@@ -82,10 +93,12 @@ document.addEventListener('DOMContentLoaded', () => {
     ========================= */
     function montarPaginacao(total, limite) {
         paginacao.innerHTML = '';
+
         const totalPaginas = Math.ceil(total / limite);
 
         for (let i = 1; i <= totalPaginas; i++) {
             const li = document.createElement('li');
+
             li.className = `page-item ${i === paginaAtual ? 'active' : ''}`;
 
             li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
@@ -131,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
        FORMATA DATA
     ========================= */
     function formatarData(data) {
-        const d = new Date(data);
+        const d = new Date(data.replace(' ', 'T'));
         return d.toLocaleDateString('pt-BR');
     }
 

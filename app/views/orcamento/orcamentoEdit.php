@@ -17,11 +17,6 @@ require_once __DIR__ . '/../includes/sidebar.php';
         <!-- HEADER -->
         <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
             <h3 class="mb-0 fw-bold">Editar Orçamento</h3>
-
-            <a href="/teamOdonto/public/index.php?page=orcamento-view&id=<?= $orcamentoId ?>"
-               class="btn btn-secondary">
-                Voltar
-            </a>
         </div>
 
         <input type="hidden" id="orcamentoId" value="<?= $orcamentoId ?>">
@@ -148,6 +143,20 @@ require_once __DIR__ . '/../includes/sidebar.php';
                 </span>
             </div>
         </div>
+
+    <div class="d-flex justify-content-end gap-2 mt-4">
+
+    <a href="/teamOdonto/public/index.php?page=orcamento-list"
+       class="btn btn-secondary">
+        Voltar
+    </a>
+
+    <button id="btnSalvarOrcamento"
+            class="btn btn-primary fw-bold">
+        Salvar
+    </button>
+
+   </div>
 
     </div>
 </main>

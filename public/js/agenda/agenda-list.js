@@ -4,13 +4,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const dataAgenda = document.getElementById('dataAgenda');
     const tipoFiltro = document.getElementById('tipoFiltro');
 
-    // Data padrão = hoje
     dataAgenda.value = new Date().toISOString().split('T')[0];
 
     function carregarAgenda() {
 
         lista.innerHTML = `
-            <div class="text-muted text-center py-3">
+            <div class="text-muted text-center py-4">
                 Carregando...
             </div>
         `;
@@ -23,13 +22,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }).then(res => {
 
-            // ✅ AJUSTE PRINCIPAL: ler data corretamente
             const agendamentos = res.data.data ?? [];
             lista.innerHTML = '';
 
             if (!agendamentos.length) {
                 lista.innerHTML = `
-                    <div class="text-muted text-center py-3">
+                    <div class="text-muted text-center py-4">
                         Nenhum agendamento para este período
                     </div>
                 `;
@@ -41,62 +39,94 @@ document.addEventListener('DOMContentLoaded', () => {
                 let badge = 'secondary';
                 let botoes = '';
 
-                /* ===== STATUS: PENDENTE ===== */
+                /* ===== PENDENTE ===== */
                 if (item.status === 'pendente') {
                     badge = 'secondary';
                     botoes = `
-                        <button class="btn btn-sm btn-primary"
-                            onclick="atualizarStatus(${item.id}, 'confirmado')">
-                            Confirmar
-                        </button>
-                        <button class="btn btn-sm btn-danger ms-1"
-                            onclick="atualizarStatus(${item.id}, 'cancelado')">
-                            Cancelar
-                        </button>
+                        <div class="d-flex justify-content-end gap-2 mt-2">
+
+                            <button class="btn btn-sm btn-outline-primary"
+                                onclick="atualizarStatus(${item.id}, 'confirmado')">
+                                <i class="bi bi-check-lg"></i>
+                            </button>
+
+                            <button class="btn btn-sm btn-outline-danger"
+                                onclick="atualizarStatus(${item.id}, 'cancelado')">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+
+                        </div>
                     `;
                 }
 
-                /* ===== STATUS: CONFIRMADO ===== */
+                /* ===== CONFIRMADO ===== */
                 if (item.status === 'confirmado') {
                     badge = 'primary';
                     botoes = `
-                        <button class="btn btn-sm btn-warning"
-                            onclick="atualizarStatus(${item.id}, 'em_atendimento')">
-                            Iniciar Atendimento
-                        </button>
+                        <div class="d-flex justify-content-end mt-2">
+
+                            <button class="btn btn-sm btn-outline-warning"
+                                onclick="atualizarStatus(${item.id}, 'em_atendimento')">
+                                <i class="bi bi-play"></i>
+                            </button>
+
+                        </div>
                     `;
                 }
 
-                /* ===== STATUS: EM ATENDIMENTO ===== */
+                /* ===== EM ATENDIMENTO ===== */
                 if (item.status === 'em_atendimento') {
                     badge = 'warning';
                     botoes = `
-                        <a href="/teamOdonto/public/index.php?page=consulta-view&agenda_id=${item.id}"
-                           class="btn btn-sm btn-success">
-                            Abrir Consulta
-                        </a>
+                        <div class="d-flex justify-content-end mt-2">
+
+                            <a href="/teamOdonto/public/index.php?page=consulta-view&agenda_id=${item.id}"
+                               class="btn btn-sm btn-outline-success">
+                                <i class="bi bi-journal-medical"></i>
+                            </a>
+
+                        </div>
                     `;
                 }
 
-                /* ===== STATUS FINAIS ===== */
-                if (item.status === 'concluido') badge = 'success';
-                if (item.status === 'cancelado') badge = 'danger';
+                /* ===== ✅ CONCLUÍDO (NOVO BOTÃO) ===== */
+                if (item.status === 'concluido') {
+                    badge = 'success';
+                    botoes = `
+                        <div class="d-flex justify-content-end mt-2">
 
-                // ✅ AJUSTE PRINCIPAL: usar nomes retornados pela API
+                            <a href="/teamOdonto/public/index.php?page=consulta-view&agenda_id=${item.id}"
+                               class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye"></i>
+                            </a>
+
+                        </div>
+                    `;
+                }
+
+                if (item.status === 'cancelado') {
+                    badge = 'danger';
+                }
+
                 lista.innerHTML += `
                     <div class="list-group-item d-flex justify-content-between align-items-center">
+
                         <div>
                             <strong>${item.data} ${item.hora.substring(0,5)}</strong><br>
                             Paciente ${item.paciente_nome}<br>
                             Dentista ${item.dentista_nome}
                         </div>
 
-                        <div class="text-end">
+                        <div class="text-end d-flex flex-column align-items-end">
+
                             <span class="badge bg-${badge} mb-2">
                                 ${item.status.replace('_', ' ')}
-                            </span><br>
+                            </span>
+
                             ${botoes}
+
                         </div>
+
                     </div>
                 `;
             });

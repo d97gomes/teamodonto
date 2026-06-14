@@ -26,8 +26,11 @@ document.addEventListener('DOMContentLoaded', () => {
        AUTOCOMPLETE
     ========================= */
     function configurarBusca(input, hidden, lista, endpoint) {
+
         let timeout;
+
         input.addEventListener('input', () => {
+
             clearTimeout(timeout);
             const termo = input.value.trim();
 
@@ -37,22 +40,28 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             timeout = setTimeout(async () => {
+
                 const res = await axios.get(
                     `/teamOdonto/public/api.php?api=${endpoint}&busca=${encodeURIComponent(termo)}`
                 );
 
                 lista.innerHTML = '';
+
                 res.data.forEach(item => {
+
                     const li = document.createElement('li');
                     li.className = 'list-group-item list-group-item-action';
                     li.textContent = item.nome;
+
                     li.onclick = () => {
                         input.value = item.nome;
                         hidden.value = item.id;
                         lista.classList.add('d-none');
                     };
+
                     lista.appendChild(li);
                 });
+
                 lista.classList.remove('d-none');
             }, 300);
         });
@@ -67,26 +76,30 @@ document.addEventListener('DOMContentLoaded', () => {
     axios
         .get('/teamOdonto/public/api.php?api=procedimentos')
         .then(res => {
+
             res.data.forEach(p => {
-                procedimentoSelect.innerHTML +=
-                    `<option value="${p.id}" data-valor="${p.valor}">
+                procedimentoSelect.innerHTML += `
+                    <option value="${p.id}" data-valor="${p.valor}">
                         ${p.nome}
-                     </option>`;
+                    </option>`;
             });
+
         });
 
     procedimentoSelect.addEventListener('change', () => {
+
         const opt = procedimentoSelect.selectedOptions[0];
         valorInput.value = opt ? Number(opt.dataset.valor).toFixed(2) : '';
+
     });
 
     /* =========================
-       ADICIONAR ITEM (MEMÓRIA)
+       ADICIONAR ITEM
     ========================= */
     btnAdicionarItem.addEventListener('click', () => {
 
         if (!procedimentoSelect.value || !denteSelect.value || !faceSelect.value) {
-            alert('Preencha todos os campos do item.');
+            mostrarMensagem('Preencha todos os campos do item ❌', 'danger');
             return;
         }
 
@@ -106,34 +119,46 @@ document.addEventListener('DOMContentLoaded', () => {
         valorInput.value = '';
 
         renderizarItens();
+        mostrarMensagem('Item adicionado ✅', 'success');
     });
 
     function renderizarItens() {
+
         tabelaItens.innerHTML = '';
         let total = 0;
 
         itens.forEach((item, index) => {
+
             total += item.valor;
+
             tabelaItens.innerHTML += `
                 <tr>
-                    <td>${item.dente}</td>
-                    <td>${item.face}</td>
+                    <td class="text-center">${item.dente}</td>
+
+                    <td class="text-center">${item.face}</td>
+
                     <td>${item.procedimento}</td>
-                    <td>R$ ${item.valor.toFixed(2)}</td>
-                    <td>
-                        <button class="btn btn-sm btn-danger"
+
+                    <td class="fw-bold">
+                        R$ ${item.valor.toFixed(2)}
+                    </td>
+
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-outline-danger"
                                 onclick="removerItem(${index})">
-                            Excluir
+                            <i class="bi bi-trash"></i>
                         </button>
                     </td>
                 </tr>`;
         });
 
         if (!itens.length) {
-            tabelaItens.innerHTML =
-                `<tr><td colspan="5" class="text-center">
-                    Nenhum item adicionado
-                 </td></tr>`;
+            tabelaItens.innerHTML = `
+                <tr>
+                    <td colspan="5" class="text-center text-muted py-4">
+                        Nenhum item adicionado
+                    </td>
+                </tr>`;
         }
 
         totalOrcamento.textContent =
@@ -141,8 +166,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.removerItem = index => {
+
         itens.splice(index, 1);
         renderizarItens();
+        mostrarMensagem('Item removido 🗑', 'success');
     };
 
     /* =========================
@@ -151,40 +178,83 @@ document.addEventListener('DOMContentLoaded', () => {
     btnSalvarOrcamento.addEventListener('click', async () => {
 
         if (!pacienteId.value || !dentistaId.value) {
-            alert('Selecione paciente e dentista.');
+            mostrarMensagem('Selecione paciente e dentista ❌', 'danger');
             return;
         }
 
         if (!itens.length) {
-            alert('Adicione ao menos um item.');
+            mostrarMensagem('Adicione ao menos um item ❌', 'danger');
             return;
         }
 
-        const res = await axios.post(
-            '/teamOdonto/public/api.php?api=orcamentos',
-            {
-                paciente_id: pacienteId.value,
-                dentista_id: dentistaId.value,
-                status: 'aberto'
-            }
-        );
+        btnSalvarOrcamento.disabled = true;
+        btnSalvarOrcamento.innerHTML = `
+            <span class="spinner-border spinner-border-sm me-1"></span>
+            Salvando...
+        `;
 
-        const orcamentoId = res.data.orcamento_id;
+        try {
 
-        for (const item of itens) {
-            await axios.post(
-                '/teamOdonto/public/api.php?api=orcamento-itens',
+            const res = await axios.post(
+                '/teamOdonto/public/api.php?api=orcamentos',
                 {
-                    orcamento_id: orcamentoId,
-                    procedimento_id: item.procedimento_id,
-                    dente: item.dente,
-                    face: item.face
+                    paciente_id: pacienteId.value,
+                    dentista_id: dentistaId.value,
+                    status: 'aberto'
                 }
             );
-        }
 
-        window.location.href =
-            `index.php?page=orcamento-view&id=${orcamentoId}`;
+            const orcamentoId = res.data.orcamento_id;
+
+            for (const item of itens) {
+                await axios.post(
+                    '/teamOdonto/public/api.php?api=orcamento-itens',
+                    {
+                        orcamento_id: orcamentoId,
+                        procedimento_id: item.procedimento_id,
+                        dente: item.dente,
+                        face: item.face
+                    }
+                );
+            }
+
+            mostrarMensagem('Orçamento criado com sucesso ✅', 'success');
+
+            setTimeout(() => {
+                window.location.href =
+                    `index.php?page=orcamento-view&id=${orcamentoId}`;
+            }, 1200);
+
+        } catch (err) {
+            console.error(err);
+            mostrarMensagem('Erro ao salvar orçamento ❌', 'danger');
+        } finally {
+            btnSalvarOrcamento.disabled = false;
+            btnSalvarOrcamento.innerHTML = 'Salvar';
+        }
     });
 
 });
+
+/* =========================
+   ALERTA PADRÃO 🔥
+========================= */
+function mostrarMensagem(texto, tipo = 'success') {
+
+    let alerta = document.getElementById('alertaSistema');
+
+    if (!alerta) {
+        alerta = document.createElement('div');
+        alerta.id = 'alertaSistema';
+        alerta.className = `alert alert-${tipo} mt-3`;
+
+        document.querySelector('.main-content')?.prepend(alerta);
+    }
+
+    alerta.className = `alert alert-${tipo} mt-3`;
+    alerta.innerHTML = texto;
+
+    setTimeout(() => {
+        alerta.remove();
+    }, 3000);
+}

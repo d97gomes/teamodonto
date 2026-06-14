@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!dados.length) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="6" class="text-center">
+                        <td colspan="6" class="text-center text-muted py-4">
                             Nenhum orçamento encontrado
                         </td>
                     </tr>
@@ -29,25 +29,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 tr.innerHTML = `
                     <td>${o.paciente}</td>
+
                     <td>${o.dentista}</td>
-                    <td>${new Date(o.data_orcamento).toLocaleDateString()}</td>
-                    <td>R$ ${Number(o.valor_total).toFixed(2).replace('.', ',')}</td>
-                    <td>${o.status}</td>
+
                     <td>
-                        <a href="index.php?page=orcamento-view&id=${o.id}"
-                           class="btn btn-sm btn-info me-1">
-                            Ver
-                        </a>
+                        ${new Date(o.data_orcamento.replace(' ', 'T'))
+                            .toLocaleDateString('pt-BR')}
+                    </td>
 
-                        <a href="index.php?page=orcamento-edit&id=${o.id}"
-                           class="btn btn-sm btn-warning me-1">
-                            Editar
-                        </a>
+                    <td class="fw-bold">
+                        R$ ${Number(o.valor_total).toFixed(2).replace('.', ',')}
+                    </td>
 
-                        <button class="btn btn-sm btn-danger"
-                                data-id="${o.id}">
-                            Excluir
-                        </button>
+                    <td>
+                        <span class="badge bg-${o.status === 'aprovado' ? 'success' : 'secondary'}">
+                            ${o.status}
+                        </span>
+                    </td>
+
+                    <!-- ✅ COLUNA AÇÕES AJUSTADA -->
+                    <td class="text-center">
+                        <div class="d-flex justify-content-center gap-2">
+
+                            <a href="index.php?page=orcamento-view&id=${o.id}"
+                               class="btn btn-sm btn-outline-info">
+                                <i class="bi bi-eye"></i>
+                            </a>
+
+                            <a href="index.php?page=orcamento-edit&id=${o.id}"
+                               class="btn btn-sm btn-outline-warning">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+
+                            <button class="btn btn-sm btn-outline-danger"
+                                    data-id="${o.id}">
+                                <i class="bi bi-trash"></i>
+                            </button>
+
+                        </div>
                     </td>
                 `;
 
@@ -58,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Erro ao listar orçamentos:', err);
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="6" class="text-center text-danger">
+                    <td colspan="6" class="text-center text-danger py-4">
                         Erro ao carregar orçamentos
                     </td>
                 </tr>
@@ -71,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.addEventListener('click', async e => {
 
-        const btn = e.target.closest('.btn-danger');
+        const btn = e.target.closest('.btn-outline-danger');
         if (!btn || !btn.dataset.id) return;
 
         const id = btn.dataset.id;
@@ -84,7 +103,9 @@ document.addEventListener('DOMContentLoaded', () => {
             );
 
             if (res.data.success) {
+
                 btn.closest('tr').remove();
+
             } else {
                 alert(res.data.message || 'Erro ao excluir orçamento');
             }

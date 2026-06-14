@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const id = params.get('id');
 
     if (!id) {
-        alert('Paciente não informado.');
+        mostrarMensagem('Paciente não informado ❌', 'danger');
         return;
     }
 
@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* =========================
-   CARREGAR PACIENTE (VIEW)
+   CARREGAR PACIENTE
 ========================= */
 function carregarPaciente(id) {
 
@@ -23,34 +23,63 @@ function carregarPaciente(id) {
             const p = response.data;
 
             if (!p) {
-                alert('Paciente não encontrado.');
+                mostrarMensagem('Paciente não encontrado ❌', 'danger');
                 return;
             }
 
-            // Dados pessoais
-            document.getElementById('paciente-nome').innerText = p.nome ?? '';
-            document.getElementById('paciente-cpf').innerText = p.cpf ?? '';
-            document.getElementById('paciente-telefone').innerText = p.telefone ?? '';
-            document.getElementById('paciente-email').innerText = p.email ?? '';
+            /* ===== DADOS PESSOAIS ===== */
+            document.getElementById('paciente-nome').innerText = p.nome ?? '-';
+            document.getElementById('paciente-cpf').innerText = p.cpf ?? '-';
+            document.getElementById('paciente-telefone').innerText = p.telefone ?? '-';
+            document.getElementById('paciente-email').innerText = p.email ?? '-';
             document.getElementById('paciente-data-nascimento').innerText =
-                p.data_nascimento ?? '';
+                p.data_nascimento ?? '-';
 
-            // Endereço
+            /* ===== ENDEREÇO ===== */
             document.getElementById('endereco-logradouro').innerText =
-                p.logradouro ?? '';
+                p.logradouro ?? '-';
+
             document.getElementById('endereco-numero').innerText =
-                p.numero ?? '';
+                p.numero ?? '-';
+
             document.getElementById('endereco-bairro').innerText =
-                p.bairro ?? '';
+                p.bairro ?? '-';
+
             document.getElementById('endereco-cidade').innerText =
-                p.cidade ?? '';
+                p.cidade ?? '-';
+
             document.getElementById('endereco-estado').innerText =
-                p.estado ?? '';
+                p.estado ?? '-';
+
             document.getElementById('endereco-cep').innerText =
-                p.cep ?? '';
+                p.cep ?? '-';
+
         })
         .catch(error => {
             console.error(error);
-            alert('Erro ao carregar dados do paciente.');
+            mostrarMensagem('Erro ao carregar dados do paciente ❌', 'danger');
         });
+}
+
+/* =========================
+   ALERTA PADRÃO 🔥
+========================= */
+function mostrarMensagem(texto, tipo = 'success') {
+
+    let alerta = document.getElementById('alertaSistema');
+
+    if (!alerta) {
+        alerta = document.createElement('div');
+        alerta.id = 'alertaSistema';
+        alerta.className = `alert alert-${tipo} mt-3`;
+
+        document.querySelector('.main-content')?.prepend(alerta);
+    }
+
+    alerta.className = `alert alert-${tipo} mt-3`;
+    alerta.innerHTML = texto;
+
+    setTimeout(() => {
+        alerta.remove();
+    }, 3000);
 }

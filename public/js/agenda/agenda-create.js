@@ -1,16 +1,21 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    const form = document.getElementById('agendaCreateForm');
+    if (!form) return;
+
+    const btnSubmit = form.querySelector('button[type="submit"]');
+
     /* ===== BUSCA PACIENTE ===== */
     const buscaPaciente   = document.getElementById('buscaPaciente');
     const listaPacientes  = document.getElementById('listaPacientes');
-    const pacienteId     = document.getElementById('paciente_id');
+    const pacienteId      = document.getElementById('paciente_id');
 
-    // Sempre que digitar, invalida o ID
     buscaPaciente.addEventListener('input', () => {
         pacienteId.value = '';
     });
 
     buscaPaciente.addEventListener('keyup', () => {
+
         if (buscaPaciente.value.length < 2) {
             listaPacientes.classList.add('d-none');
             return;
@@ -28,6 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
             listaPacientes.classList.remove('d-none');
 
             dados.forEach(p => {
+
                 const btn = document.createElement('button');
                 btn.type = 'button';
                 btn.className = 'list-group-item list-group-item-action';
@@ -41,20 +47,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 listaPacientes.appendChild(btn);
             });
+
+        }).catch(() => {
+            listaPacientes.innerHTML =
+                '<li class="list-group-item text-danger">Erro ao buscar pacientes</li>';
         });
     });
 
     /* ===== BUSCA DENTISTA ===== */
     const buscaDentista  = document.getElementById('buscaDentista');
     const listaDentistas = document.getElementById('listaDentistas');
-    const dentistaId    = document.getElementById('dentista_id');
+    const dentistaId     = document.getElementById('dentista_id');
 
-    // Sempre que digitar, invalida o ID
     buscaDentista.addEventListener('input', () => {
         dentistaId.value = '';
     });
 
     buscaDentista.addEventListener('keyup', () => {
+
         if (buscaDentista.value.length < 2) {
             listaDentistas.classList.add('d-none');
             return;
@@ -72,6 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
             listaDentistas.classList.remove('d-none');
 
             dados.forEach(d => {
+
                 const btn = document.createElement('button');
                 btn.type = 'button';
                 btn.className = 'list-group-item list-group-item-action';
@@ -85,15 +96,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 listaDentistas.appendChild(btn);
             });
+
+        }).catch(() => {
+            listaDentistas.innerHTML =
+                '<li class="list-group-item text-danger">Erro ao buscar dentistas</li>';
         });
     });
 
-    /* ===== SUBMIT (AJUSTADO DEFINITIVO) ===== */
-    document.getElementById('agendaCreateForm').addEventListener('submit', e => {
+    /* ===== SUBMIT ===== */
+    form.addEventListener('submit', e => {
         e.preventDefault();
 
         if (!pacienteId.value || !dentistaId.value) {
-            alert('Selecione o paciente e o dentista na lista.');
+            mostrarMensagem('Selecione o paciente e o dentista ❌', 'danger');
             return;
         }
 
@@ -101,29 +116,71 @@ document.addEventListener('DOMContentLoaded', () => {
         const hora = document.getElementById('hora').value;
 
         if (!data || !hora) {
-            alert('Selecione a data e a hora.');
+            mostrarMensagem('Selecione a data e a hora ❌', 'danger');
             return;
         }
+
+        /* ===== LOADING ===== */
+        btnSubmit.disabled = true;
+        btnSubmit.innerHTML = `
+            <span class="spinner-border spinner-border-sm me-1"></span>
+            Salvando...
+        `;
 
         const formData = new FormData();
         formData.append('paciente_id', pacienteId.value);
         formData.append('dentista_id', dentistaId.value);
-
-        // ✅ NOMES EXATOS QUE O CONTROLLER ESPERA
         formData.append('data_agenda', data);
         formData.append('hora_agenda', hora);
 
         axios.post('/teamOdonto/public/api.php?api=agenda', formData)
             .then(res => {
+
                 if (res.data.success) {
-                    window.location.href = 'index.php?page=agenda';
+
+                    mostrarMensagem('Agendamento criado com sucesso ✅', 'success');
+
+                    setTimeout(() => {
+                        window.location.href = 'index.php?page=agenda';
+                    }, 1200);
+
                 } else {
-                    alert(res.data.message ?? 'Erro ao criar agendamento.');
+                    mostrarMensagem(res.data.message ?? 'Erro ao criar agendamento ❌', 'danger');
                 }
+
             })
             .catch(() => {
-                alert('Erro de comunicação com o servidor.');
+                mostrarMensagem('Erro de comunicação com o servidor ❌', 'danger');
+            })
+            .finally(() => {
+
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = 'Salvar';
+
             });
     });
 
 });
+
+/* =========================
+   ALERTA PADRÃO 🔥
+========================= */
+function mostrarMensagem(texto, tipo = 'success') {
+
+    let alerta = document.getElementById('alertaSistema');
+
+    if (!alerta) {
+        alerta = document.createElement('div');
+        alerta.id = 'alertaSistema';
+        alerta.className = `alert alert-${tipo} mt-3`;
+
+        document.querySelector('.main-content')?.prepend(alerta);
+    }
+
+    alerta.className = `alert alert-${tipo} mt-3`;
+    alerta.innerHTML = texto;
+
+    setTimeout(() => {
+        alerta.remove();
+    }, 3000);
+}
