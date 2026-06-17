@@ -97,30 +97,30 @@ class OrcamentoModel
     /**
      * Busca dados completos para formulário (EDITAR)
      */
-    public function buscarParaFormulario(int $id): array|false
-    {
-        $stmt = $this->db->prepare("
-            SELECT
-                o.id,
-                o.paciente_id,
-                o.dentista_id,
-                o.consulta_id,
-                o.status,
-                o.valor_total,
-                dp_p.nome AS paciente,
-                dp_d.nome AS dentista
-            FROM orcamentos o
-            JOIN paciente p ON p.id = o.paciente_id
-            JOIN dados_pessoais dp_p ON dp_p.id = p.dados_pessoais_id
-            JOIN dentista d ON d.id = o.dentista_id
-            JOIN dados_pessoais dp_d ON dp_d.id = d.dados_pessoais_id
-            WHERE o.id = ?
-        ");
+   public function buscarParaFormulario(int $id): array|false
+{
+    $stmt = $this->db->prepare("
+        SELECT
+            o.id,
+            o.paciente_id,
+            o.dentista_id,
+            o.consulta_id,
+            o.data_orcamento, -- ✅ ADICIONADO
+            o.status,
+            o.valor_total,
+            dp_p.nome AS paciente,
+            dp_d.nome AS dentista
+        FROM orcamentos o
+        JOIN paciente p ON p.id = o.paciente_id
+        JOIN dados_pessoais dp_p ON dp_p.id = p.dados_pessoais_id
+        JOIN dentista d ON d.id = o.dentista_id
+        JOIN dados_pessoais dp_d ON dp_d.id = d.dados_pessoais_id
+        WHERE o.id = ?
+    ");
 
-        $stmt->execute([$id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
-
+    $stmt->execute([$id]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
     /**
      * Atualiza status do orçamento
      */

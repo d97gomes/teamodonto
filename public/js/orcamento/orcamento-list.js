@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             dados.forEach(o => {
+
                 const tr = document.createElement('tr');
 
                 tr.innerHTML = `
@@ -41,13 +42,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         R$ ${Number(o.valor_total).toFixed(2).replace('.', ',')}
                     </td>
 
+                    <!-- ✅ STATUS AJUSTADO -->
                     <td>
-                        <span class="badge bg-${o.status === 'aprovado' ? 'success' : 'secondary'}">
-                            ${o.status}
-                        </span>
+                        ${getBadgeStatus(o.status)}
                     </td>
 
-                    <!-- ✅ COLUNA AÇÕES AJUSTADA -->
                     <td class="text-center">
                         <div class="d-flex justify-content-center gap-2">
 
@@ -75,6 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .catch(err => {
             console.error('Erro ao listar orçamentos:', err);
+
             tbody.innerHTML = `
                 <tr>
                     <td colspan="6" class="text-center text-danger py-4">
@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
     /* =========================
-       EXCLUIR ORÇAMENTO
+       EXCLUIR
     ========================= */
 
     document.addEventListener('click', async e => {
@@ -99,13 +99,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             const res = await axios.delete(
-                `/teamOdonto/public/api.php?api=orcamentos&id=${id}`
+                `/teamOdonto/public/api.php?api=orcamentos&id=${id}` // ✅ corrigido
             );
 
             if (res.data.success) {
-
                 btn.closest('tr').remove();
-
             } else {
                 alert(res.data.message || 'Erro ao excluir orçamento');
             }
@@ -117,3 +115,36 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 });
+
+/* =========================
+   ✅ STATUS PROFISSIONAL
+========================= */
+function getBadgeStatus(status) {
+
+    const mapa = {
+        aberto: 'secondary',   // cinza
+        aprovado: 'success',   // verde
+        cancelado: 'danger'    // 🔴 vermelho
+    };
+
+    const classe = mapa[status?.toLowerCase()] || 'secondary';
+
+    return `
+        <span class="badge rounded-pill bg-${classe}">
+            ${formatarStatus(status)}
+        </span>
+    `;
+}
+
+/* =========================
+   FORMATAR STATUS
+========================= */
+function formatarStatus(status) {
+    const mapa = {
+        aberto: 'Aberto',
+        aprovado: 'Aprovado',
+        cancelado: 'Cancelado'
+    };
+
+    return mapa[status?.toLowerCase()] || status;
+}

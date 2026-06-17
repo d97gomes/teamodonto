@@ -1,11 +1,45 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    const form = document.getElementById('formOrcamento');
+    const form = document.getElementById('formOrcamentoEdit');
     if (!form) return;
 
     const btnSubmit = form.querySelector('button[type="submit"]');
 
-    let itens = []; // 🔥 LISTA DE ITENS
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
+
+    if (!id) {
+        mostrarMensagem('ID do orçamento não informado ❌', 'danger');
+        return;
+    }
+
+    let itens = []; // 🔥 lista de itens
+
+    /* =========================
+       CARREGAR ORÇAMENTO
+    ========================= */
+    axios
+        .get(`/teamOdonto/public/api.php?api=orcamentos&id=${id}`)
+        .then(res => {
+
+            const dados = res.data;
+
+            // ✅ preencher campos do form
+            for (let key in dados) {
+                const el = form.querySelector(`[name="${key}"]`);
+                if (el) el.value = dados[key];
+            }
+
+            // ✅ itens (IMPORTANTE)
+            itens = dados.itens || [];
+
+            atualizarTabela();
+
+        })
+        .catch(err => {
+            console.error(err);
+            mostrarMensagem('Erro ao carregar orçamento ❌', 'danger');
+        });
 
     /* =========================
        ADICIONAR ITEM
@@ -20,16 +54,13 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const item = {
+        itens.push({
             procedimento,
             valor
-        };
-
-        itens.push(item);
+        });
 
         atualizarTabela();
 
-        // limpar campos
         document.getElementById('procedimento').value = '';
         document.getElementById('valor').value = '';
     });
@@ -61,13 +92,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>${item.procedimento}</td>
                 <td>R$ ${item.valor}</td>
                 <td>
-                    <button class="btn btn-sm btn-danger" data-index="${index}">
+                    <button class="btn btn-sm btn-danger">
                         Remover
                     </button>
                 </td>
             `;
 
-            // remover item
             tr.querySelector('button').addEventListener('click', () => {
                 itens.splice(index, 1);
                 atualizarTabela();
@@ -78,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* =========================
-       SUBMIT (SALVAR)
+       SALVAR (PUT)
     ========================= */
     form.addEventListener('submit', e => {
         e.preventDefault();
@@ -90,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const dados = {
             ...Object.fromEntries(new FormData(form)),
-            itens // 🔥 ENVIA TODOS OS ITENS
+            itens
         };
 
         btnSubmit.disabled = true;
@@ -100,12 +130,12 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
 
         axios
-            .post('/teamOdonto/public/api.php?api=orcamentos', dados)
+            .put(`/teamOdonto/public/api.php?api=orcamentos&id=${id}`, dados)
             .then(res => {
 
                 if (res.data.success) {
 
-                    mostrarMensagem('Orçamento criado com sucesso ✅');
+                    mostrarMensagem('Orçamento atualizado com sucesso ✅');
 
                     setTimeout(() => {
                         window.location.href =
@@ -113,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }, 1200);
 
                 } else {
-                    mostrarMensagem('Erro ao salvar orçamento ❌', 'danger');
+                    mostrarMensagem('Erro ao atualizar orçamento ❌', 'danger');
                 }
 
             })

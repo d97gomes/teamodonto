@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* =========================
-       DADOS DO ORÇAMENTO
+       DADOS DO ORÇAMENTO ✅
     ========================= */
     axios
         .get(`/teamOdonto/public/api.php?api=orcamentos&id=${ORCAMENTO_ID}`)
@@ -14,18 +14,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const o = res.data;
 
+            console.log('ORCAMENTO VIEW:', o);
+
             document.getElementById('orcPaciente').textContent = o.paciente ?? '-';
             document.getElementById('orcDentista').textContent = o.dentista ?? '-';
 
-            // ✅ CORREÇÃO DE DATA
-            const data = new Date(o.data_orcamento.replace(' ', 'T'));
-            document.getElementById('orcData').textContent =
-                data.toLocaleDateString('pt-BR');
+                    /* ✅ DATA CORRETA (DO BANCO) */
+            const dataEl = document.getElementById('orcData');
 
-            document.getElementById('orcStatus').textContent = o.status ?? '-';
+            if (dataEl && o.data_orcamento) {
+
+                const data = new Date(o.data_orcamento.replace(' ', 'T'));
+
+                dataEl.textContent = data.toLocaleDateString('pt-BR');
+
+            } else {
+
+                dataEl.textContent = '-';
+
+            }
+
+            /* ✅ STATUS CORRIGIDO */
+            const statusEl = document.getElementById('orcStatus');
+
+            if (statusEl && o.status) {
+                statusEl.textContent = formatarStatus(o.status);
+            } else {
+                statusEl.textContent = '-';
+            }
 
             document.getElementById('orcTotal').textContent =
-                'R$ ' + Number(o.valor_total).toFixed(2).replace('.', ',');
+                'R$ ' + Number(o.valor_total ?? 0).toFixed(2).replace('.', ',');
 
         })
         .catch(err => {
@@ -33,8 +52,9 @@ document.addEventListener('DOMContentLoaded', () => {
             mostrarMensagem('Erro ao carregar dados do orçamento ❌', 'danger');
         });
 
+
     /* =========================
-       ITENS DO ORÇAMENTO
+       ITENS ✅
     ========================= */
     axios
         .get(`/teamOdonto/public/api.php?api=orcamento-itens&orcamento_id=${ORCAMENTO_ID}`)
@@ -49,8 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <td colspan="4" class="text-center text-muted py-4">
                             Nenhum item encontrado
                         </td>
-                    </tr>
-                `;
+                    </tr>`;
                 return;
             }
 
@@ -60,15 +79,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 tr.innerHTML = `
                     <td class="text-center">${i.dente}</td>
-
                     <td class="text-center">${i.face}</td>
-
                     <td>${i.procedimento}</td>
-
                     <td class="fw-bold">
                         R$ ${Number(i.valor).toFixed(2).replace('.', ',')}
-                    </td>
-                `;
+                    </td>`;
 
                 tbody.appendChild(tr);
             });
@@ -81,8 +96,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 
+
 /* =========================
-   ALERTA PADRÃO 🔥
+   FORMATAR STATUS ✅
+========================= */
+function formatarStatus(status) {
+
+    if (!status) return '-';
+
+    const mapa = {
+        aberto: 'Aberto',
+        aprovado: 'Aprovado',
+        reprovado: 'Reprovado'
+    };
+
+    return mapa[status.toLowerCase()] || status;
+}
+
+
+/* =========================
+   ALERTA ✅
 ========================= */
 function mostrarMensagem(texto, tipo = 'success') {
 
@@ -99,7 +132,5 @@ function mostrarMensagem(texto, tipo = 'success') {
     alerta.className = `alert alert-${tipo} mt-3`;
     alerta.innerHTML = texto;
 
-    setTimeout(() => {
-        alerta.remove();
-    }, 3000);
+    setTimeout(() => alerta.remove(), 3000);
 }

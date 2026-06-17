@@ -18,62 +18,51 @@ if (!$id) {
 
 <main class="main-content" data-dentista="<?= (int)$id ?>">
 
-    <nav class="navbar navbar-custom sticky-top">
-        <h5 class="mb-0 fw-bold">
-            Dentista: <span id="dentista-nome-titulo"></span>
-        </h5>
-    </nav>
+    <div class="container-fluid px-3 px-md-4 px-lg-5 pt-4">
 
-    <div class="p-4 p-lg-5">
+        <!-- ✅ HEADER PADRÃO -->
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
 
-        <div class="card border-0 shadow-sm">
+            <h4 class="fw-bold mb-0">
+                Dentista: <span id="dentista-nome-titulo"></span>
+            </h4>
+
+            <a href="/teamOdonto/public/index.php?page=dentista-list"
+               class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-arrow-left me-1"></i>
+                Voltar
+            </a>
+
+        </div>
+
+        <!-- ✅ CARD PRINCIPAL -->
+        <div class="card border-0 shadow-sm p-3 p-md-4">
 
             <!-- ABAS -->
-            <ul class="nav nav-tabs px-3 pt-3" role="tablist">
-
+            <ul class="nav nav-tabs mb-4">
                 <li class="nav-item">
-                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#dados">
+                    <button class="nav-link active"
+                            data-bs-toggle="tab"
+                            data-bs-target="#dados">
                         Dados do Dentista
                     </button>
                 </li>
-
-                <li class="nav-item">
-                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#anamnese">
-                        Anamneses
-                    </button>
-                </li>
-
-                <li class="nav-item">
-                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#agenda">
-                        Agenda
-                    </button>
-                </li>
-
-                <li class="nav-item">
-                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#consultas">
-                        Consultas
-                    </button>
-                </li>
-
-                <li class="nav-item">
-                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#orcamentos">
-                        Orçamentos
-                    </button>
-                </li>
-
             </ul>
 
-            <!-- CONTEÚDO DAS ABAS -->
-            <div class="tab-content p-4">
+            <div class="tab-content">
 
-                <!-- DADOS DO DENTISTA -->
                 <div class="tab-pane fade show active" id="dados">
 
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="card mb-3">
-                                <div class="card-header fw-bold">Dados Pessoais</div>
-                                <div class="card-body">
+                    <div class="row g-3">
+
+                        <!-- DADOS PESSOAIS -->
+                        <div class="col-12 col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header fw-bold">
+                                    Dados Pessoais
+                                </div>
+
+                                <div class="card-body small">
                                     <p><strong>Nome:</strong> <span id="dentista-nome"></span></p>
                                     <p><strong>CPF:</strong> <span id="dentista-cpf"></span></p>
                                     <p><strong>Telefone:</strong> <span id="dentista-telefone"></span></p>
@@ -82,87 +71,58 @@ if (!$id) {
                             </div>
                         </div>
 
-                        <div class="col-md-6">
-                            <div class="card mb-3">
-                                <div class="card-header fw-bold">Dados Profissionais</div>
-                                <div class="card-body">
+                        <!-- DADOS PROFISSIONAIS -->
+                        <div class="col-12 col-md-6">
+                            <div class="card h-100">
+                                <div class="card-header fw-bold">
+                                    Dados Profissionais
+                                </div>
+
+                                <div class="card-body small">
                                     <p><strong>Sexo:</strong> <span id="dentista-sexo"></span></p>
                                     <p><strong>CRO:</strong> <span id="dentista-cro"></span></p>
                                     <p><strong>Especialidade:</strong> <span id="dentista-especialidade"></span></p>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="card">
-                        <div class="card-header fw-bold">Endereço</div>
-                        <div class="card-body">
-                            <p>
-                                <span id="endereco-logradouro"></span>,
-                                <span id="endereco-numero"></span>
-                            </p>
-                            <p>
-                                <span id="endereco-bairro"></span> –
-                                <span id="endereco-cidade"></span> /
-                                <span id="endereco-estado"></span>
-                            </p>
-                            <p><strong>CEP:</strong> <span id="endereco-cep"></span></p>
+                        <!-- ENDEREÇO -->
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header fw-bold">
+                                    Endereço
+                                </div>
+
+                                <div class="card-body small">
+
+                                    <p>
+                                        <span id="endereco-logradouro"></span>,
+                                        <span id="endereco-numero"></span>
+                                    </p>
+
+                                    <p>
+                                        <span id="endereco-bairro"></span> –
+                                        <span id="endereco-cidade"></span> /
+                                        <span id="endereco-estado"></span>
+                                    </p>
+
+                                    <p>
+                                        <strong>CEP:</strong>
+                                        <span id="endereco-cep"></span>
+                                    </p>
+
+                                </div>
+                            </div>
                         </div>
+
                     </div>
 
-                </div>
-
-                <!-- ANAMNESES -->
-                <div class="tab-pane fade" id="anamnese">
-
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h6 class="mb-0 fw-bold">Anamneses do Dentista</h6>
-
-                        <a href="/teamOdonto/public/index.php?page=anamnese-create&dentista_id=<?= (int)$id ?>"
-                           class="btn btn-sm btn-primary">
-                            Nova Anamnese
-                        </a>
-                    </div>
-
-                    <table class="table table-sm table-striped align-middle">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Data</th>
-                                <th>Paciente</th>
-                                <th class="text-end">Ações</th>
-                            </tr>
-                        </thead>
-
-                        <tbody id="listaAnamnesesDentista">
-                            <tr>
-                                <td colspan="3" class="text-center text-muted">
-                                    Carregando...
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                </div>
-
-                <!-- AGENDA -->
-                <div class="tab-pane fade" id="agenda">
-                    <p class="text-muted">Nenhum horário cadastrado na agenda.</p>
-                    <button class="btn btn-sm btn-primary">Novo Horário</button>
-                </div>
-
-                <!-- CONSULTAS -->
-                <div class="tab-pane fade" id="consultas">
-                    <p class="text-muted">Nenhuma consulta registrada.</p>
-                </div>
-
-                <!-- ORÇAMENTOS -->
-                <div class="tab-pane fade" id="orcamentos">
-                    <p class="text-muted">Nenhum orçamento vinculado.</p>
                 </div>
 
             </div>
 
         </div>
+
     </div>
 
 </main>

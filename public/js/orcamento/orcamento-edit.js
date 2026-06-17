@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const pacienteNome = document.getElementById('pacienteNome');
     const dentistaNome = document.getElementById('dentistaNome');
     const statusSelect = document.getElementById('statusSelect');
+    const dataInput = document.getElementById('dataOrcamento');
 
     const procedimentoSelect = document.getElementById('procedimentoSelect');
     const denteSelect = document.getElementById('denteSelect');
@@ -18,20 +19,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let total = 0;
 
+    if (!orcamentoId) {
+        mostrarMensagem('Orçamento não informado ❌', 'danger');
+        return;
+    }
+
     /* =========================
-       CARREGAR ORÇAMENTO
+       CARREGAR ORÇAMENTO ✅
     ========================= */
     axios
         .get(`/teamOdonto/public/api.php?api=orcamentos&id=${orcamentoId}`)
         .then(res => {
+
             const o = res.data;
 
-            pacienteNome.value = o.paciente;
-            dentistaNome.value = o.dentista;
-            statusSelect.value = o.status;
+            console.log('ORCAMENTO:', o);
 
+            pacienteNome.value = o.paciente ?? '';
+            dentistaNome.value = o.dentista ?? '';
+
+            /* ✅ STATUS (GARANTE FUNCIONAR) */
+            if (statusSelect) {
+                statusSelect.value = (o.status ?? '').toLowerCase();
+            }
+
+            /* ✅ DATA (IMPORTANTE) */
+            if (dataInput && o.data) {
+                dataInput.value = o.data.split(' ')[0]; // YYYY-MM-DD
+            }
+
+            /* ✅ TOTAL */
             totalOrcamento.textContent =
-                'R$ ' + Number(o.valor_total).toFixed(2).replace('.', ',');
+                'R$ ' + Number(o.valor_total ?? 0).toFixed(2).replace('.', ',');
 
         })
         .catch(err => {
@@ -39,12 +58,15 @@ document.addEventListener('DOMContentLoaded', () => {
             mostrarMensagem('Erro ao carregar orçamento ❌', 'danger');
         });
 
+
     /* =========================
-       PROCEDIMENTOS
+       CARREGAR PROCEDIMENTOS ✅
     ========================= */
     axios
         .get('/teamOdonto/public/api.php?api=procedimentos')
         .then(res => {
+
+            procedimentoSelect.innerHTML = '<option value="">Selecione</option>';
 
             res.data.forEach(p => {
                 procedimentoSelect.innerHTML += `
@@ -59,16 +81,29 @@ document.addEventListener('DOMContentLoaded', () => {
             mostrarMensagem('Erro ao carregar procedimentos ❌', 'danger');
         });
 
+
     /* =========================
-       ITENS
+       CARREGAR ITENS ✅
     ========================= */
     function carregarItens() {
+
         axios
             .get(`/teamOdonto/public/api.php?api=orcamento-itens&orcamento_id=${orcamentoId}`)
             .then(res => {
 
                 tabelaItens.innerHTML = '';
                 total = 0;
+
+                if (!res.data.length) {
+                    tabelaItens.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="text-center text-muted">
+                                Nenhum item
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
 
                 res.data.forEach(item => {
 
@@ -77,15 +112,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     tabelaItens.innerHTML += `
                         <tr>
                             <td class="text-center">${item.dente}</td>
-
                             <td class="text-center">${item.face}</td>
-
                             <td>${item.procedimento}</td>
-
                             <td class="fw-bold">
                                 R$ ${Number(item.valor).toFixed(2).replace('.', ',')}
                             </td>
-
                             <td class="text-center">
                                 <button class="btn btn-sm btn-outline-danger"
                                         onclick="removerItem(${item.id})">
@@ -107,8 +138,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     carregarItens();
 
+
     /* =========================
-       ADICIONAR ITEM
+       ADICIONAR ITEM ✅
     ========================= */
     btnAdicionarItem.addEventListener('click', () => {
 
@@ -133,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 faceSelect.value = '';
 
                 carregarItens();
-                mostrarMensagem('Item adicionado ✅', 'success');
+                mostrarMensagem('Item adicionado ✅');
 
             })
             .catch(err => {
@@ -143,10 +175,12 @@ document.addEventListener('DOMContentLoaded', () => {
             .finally(() => {
                 btnAdicionarItem.disabled = false;
             });
+
     });
 
+
     /* =========================
-       REMOVER ITEM
+       REMOVER ITEM ✅
     ========================= */
     window.removerItem = id => {
 
@@ -156,7 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .delete(`/teamOdonto/public/api.php?api=orcamento-itens&id=${id}&orcamento_id=${orcamentoId}`)
             .then(() => {
                 carregarItens();
-                mostrarMensagem('Item removido ✅', 'success');
+                mostrarMensagem('Item removido ✅');
             })
             .catch(err => {
                 console.error(err);
@@ -164,8 +198,9 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     };
 
+
     /* =========================
-       SALVAR ORÇAMENTO
+       SALVAR ORÇAMENTO ✅
     ========================= */
     btnSalvarOrcamento.addEventListener('click', () => {
 
@@ -177,14 +212,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         axios.put(
             `/teamOdonto/public/api.php?api=orcamentos&id=${orcamentoId}`,
-            { status: statusSelect.value }
+            {
+                status: statusSelect.value,
+                data: dataInput?.value ?? null
+            }
         )
         .then(() => {
 
-            mostrarMensagem('Orçamento salvo com sucesso ✅', 'success');
+            mostrarMensagem('Orçamento salvo com sucesso ✅');
 
             setTimeout(() => {
-                window.location.href = '/teamOdonto/public/index.php?page=orcamento-list';
+                window.location.href =
+                    '/teamOdonto/public/index.php?page=orcamento-list';
             }, 1200);
 
         })
@@ -200,6 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 });
+
 
 /* =========================
    ALERTA PADRÃO 🔥
@@ -219,7 +259,5 @@ function mostrarMensagem(texto, tipo = 'success') {
     alerta.className = `alert alert-${tipo} mt-3`;
     alerta.innerHTML = texto;
 
-    setTimeout(() => {
-        alerta.remove();
-    }, 3000);
+    setTimeout(() => alerta.remove(), 3000);
 }
