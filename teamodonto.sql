@@ -185,7 +185,7 @@ CREATE TABLE IF NOT EXISTS orcamentos (
   dentista_id INT NOT NULL,
   consulta_id INT DEFAULT NULL,
   data_orcamento DATETIME DEFAULT CURRENT_TIMESTAMP,
-  status ENUM('aberto','aprovado') DEFAULT 'aberto',
+  status ENUM('aberto','aprovado', 'cancelado') DEFAULT 'aberto',
   valor_total DECIMAL(10,2) DEFAULT 0.00,
   FOREIGN KEY (paciente_id) REFERENCES paciente(id),
   FOREIGN KEY (dentista_id) REFERENCES dentista(id),
