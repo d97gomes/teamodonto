@@ -10,48 +10,56 @@ require_once __DIR__ . '/../includes/sidebar.php';
 ?>
 
 <main class="main-content">
-    <nav class="navbar navbar-custom sticky-top">
-        <h5 class="mb-0 fw-bold">Agenda</h5>
-    </nav>
 
-    <div class="p-4 p-lg-5">
-        <div class="card p-4 border-0 shadow-sm">
+    <!-- HEADER PADRÃO -->
+    <div class="container-fluid px-3 px-md-4 px-lg-5 pt-4">
 
-            <!-- CABEÇALHO + FILTROS + BOTÃO -->
-            <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+        <div class="d-flex justify-content-between align-items-center mb-4">
 
-                <div class="d-flex flex-wrap align-items-center gap-2">
-                    <h5 class="fw-bold mb-0 me-3">Agendamentos</h5>
+            <h4 class="fw-bold mb-0">Agenda</h4>
 
-                    <select id="tipoFiltro" class="form-select w-auto">
-                        <option value="dia">Dia</option>
-                        <option value="semana">Semana</option>
-                        <option value="mes">Mês</option>
-                    </select>
+            <a href="index.php?page=agenda-create" class="btn btn-primary fw-bold">
+                + Novo Agendamento
+            </a>
 
-                    <input type="date" id="dataAgenda" class="form-control w-auto">
-                </div>
+        </div>
 
-                <!-- BOTÃO NOVO AGENDAMENTO -->
-                <a href="index.php?page=agenda-create" class="btn btn-primary fw-bold">
-                    + Novo Agendamento
-                </a>
+        <!-- CARD -->
+        <div class="card p-3 p-md-4 border-0 shadow-sm">
+
+            <!-- FILTROS -->
+            <div class="d-flex flex-wrap align-items-center gap-2 mb-4">
+
+                <h6 class="fw-bold mb-0 me-2">Agendamentos</h6>
+
+                <select id="tipoFiltro" class="form-select w-auto">
+                    <option value="dia">Dia</option>
+                    <option value="semana">Semana</option>
+                    <option value="mes" selected>Mês</option>
+                </select>
+
+                <input type="date"
+                       id="dataAgenda"
+                       class="form-control w-auto">
 
             </div>
 
             <!-- LISTA -->
             <div class="list-group list-group-flush" id="listaAgenda">
+
                 <div class="text-muted text-center py-3">
                     Carregando agenda...
                 </div>
+
             </div>
 
         </div>
+
     </div>
+
 </main>
 
-<!-- JS DA AGENDA -->
-<script src="js/agenda/agenda-list.js"></script>
+<!-- ✅ JS -->
+<script src="/teamOdonto/public/js/agenda/agenda-list.js"></script>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
-``

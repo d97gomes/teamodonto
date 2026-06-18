@@ -32,7 +32,7 @@ class AgendaModel
         ]);
     }
 
-    /* ========= READ SIMPLES (POR DATA) ========= */
+    /* ========= LISTAR POR DATA ========= */
     public function listarPorData(string $data): array
     {
         $stmt = $this->db->prepare("
@@ -41,15 +41,24 @@ class AgendaModel
                 a.data,
                 a.hora,
                 a.status,
+
                 dp_p.nome AS paciente_nome,
-                dp_d.nome AS dentista_nome
+                dp_d.nome AS dentista_nome,
+
+                c.id AS consulta_id -- ✅ IMPORTANTE
+
             FROM agenda a
+
+            LEFT JOIN consultas c ON c.agenda_id = a.id -- ✅ IMPORTANTE
+
             JOIN paciente p ON p.id = a.paciente_id
             LEFT JOIN dados_pessoais dp_p 
                 ON dp_p.id = p.dados_pessoais_id
+
             JOIN dentista d ON d.id = a.dentista_id
             LEFT JOIN dados_pessoais dp_d 
                 ON dp_d.id = d.dados_pessoais_id
+
             WHERE a.data = ?
             ORDER BY a.hora
         ");
@@ -58,7 +67,7 @@ class AgendaModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    /* ========= READ AVANÇADO (DIA / SEMANA / MÊS) ========= */
+    /* ========= LISTAGEM COMPLETA ========= */
     public function listar(string $tipo, string $data): array
     {
         $baseSql = "
@@ -67,12 +76,20 @@ class AgendaModel
                 a.data,
                 a.hora,
                 a.status,
+
                 dp_p.nome AS paciente_nome,
-                dp_d.nome AS dentista_nome
+                dp_d.nome AS dentista_nome,
+
+                c.id AS consulta_id -- ✅ AQUI É O SEGREDO
+
             FROM agenda a
+
+            LEFT JOIN consultas c ON c.agenda_id = a.id -- ✅ LIGA CONSULTA
+
             JOIN paciente p ON p.id = a.paciente_id
             LEFT JOIN dados_pessoais dp_p 
                 ON dp_p.id = p.dados_pessoais_id
+
             JOIN dentista d ON d.id = a.dentista_id
             LEFT JOIN dados_pessoais dp_d 
                 ON dp_d.id = d.dados_pessoais_id
@@ -115,15 +132,16 @@ class AgendaModel
         return $stmt->execute([$status, $id]);
     }
 
+    /* ========= BUSCAR POR ID ========= */
     public function buscarPorId(int $id): ?array
-{
-    $stmt = $this->db->prepare("
-        SELECT * FROM agenda WHERE id = ?
-    ");
-    $stmt->execute([$id]);
-    $agenda = $stmt->fetch(PDO::FETCH_ASSOC);
+    {
+        $stmt = $this->db->prepare("
+            SELECT * FROM agenda WHERE id = ?
+        ");
+        $stmt->execute([$id]);
 
-    return $agenda ?: null;
-}
+        $agenda = $stmt->fetch(PDO::FETCH_ASSOC);
 
+        return $agenda ?: null;
+    }
 }

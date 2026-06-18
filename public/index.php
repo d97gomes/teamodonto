@@ -114,10 +114,13 @@ switch ($pagina) {
         require '../app/views/agenda/agendaCreate.php';
         break;
 
-    case 'consulta-view':
-        require '../app/views/consulta/consultaView.php';
+    case 'consulta-create':
+        require '../app/views/consulta/consultaCreate.php';
         break;    
 
+        case 'consulta-view':
+        require '../app/views/consulta/consultaView.php';
+        break; 
 
     default:
         echo 'Página não encontrada';

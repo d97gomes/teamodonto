@@ -92,4 +92,33 @@ class ConsultaModel
 
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
+/* ========= READ (POR ID) ========= */
+/* ========= READ (POR ID) ========= */
+public function buscarPorId(int $id): ?array
+{
+    $stmt = $this->db->prepare("
+        SELECT 
+            c.*,
+
+            dp_p.nome AS paciente,
+            dp_d.nome AS dentista
+
+        FROM consultas c
+
+        JOIN paciente p ON p.id = c.paciente_id
+        JOIN dados_pessoais dp_p ON dp_p.id = p.dados_pessoais_id
+
+        JOIN dentista d ON d.id = c.dentista_id
+        JOIN dados_pessoais dp_d ON dp_d.id = d.dados_pessoais_id
+
+        WHERE c.id = ?  -- ✅ CORRETO
+    ");
+
+    $stmt->execute([$id]);
+
+    return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+}
+
+
 }

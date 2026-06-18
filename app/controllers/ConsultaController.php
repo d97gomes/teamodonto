@@ -80,4 +80,10 @@ class ConsultaController
             'data' => $this->consultaModel->listar()
         ];
     }
+
+    /* ========= BUSCAR CONSULTA POR ID ========= */
+public function buscarPorId(int $id): ?array
+{
+    return $this->consultaModel->buscarPorId($id);
+}
 }

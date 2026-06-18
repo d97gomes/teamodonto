@@ -312,7 +312,22 @@ if ($api === 'consulta-finalizar' && $method === 'POST') {
 }
 
 if ($api === 'consultas' && $method === 'GET') {
-    echo json_encode($consultaController->listarAjax());
+
+    header('Content-Type: application/json; charset=utf-8');
+
+    /* ✅ BUSCAR POR ID */
+    if (isset($_GET['id'])) {
+
+        echo json_encode(
+            $consultaController->buscarPorId((int)$_GET['id'])
+        );
+        exit;
+    }
+
+    /* ✅ LISTAR */
+    echo json_encode(
+        $consultaController->listarAjax()
+    );
     exit;
 }
 
