@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    const form = document.getElementById('formOrcamentoEdit');
+    const form = document.getElementById('formDentista'); // ✅ CORRETO
     if (!form) return;
 
     const btnSubmit = form.querySelector('button[type="submit"]');
@@ -9,120 +9,61 @@ document.addEventListener('DOMContentLoaded', () => {
     const id = params.get('id');
 
     if (!id) {
-        mostrarMensagem('ID do orçamento não informado ❌', 'danger');
+        mostrarMensagem('Dentista não informado ❌', 'danger');
         return;
     }
 
-    let itens = []; // 🔥 lista de itens
-
     /* =========================
-       CARREGAR ORÇAMENTO
+       CARREGAR DENTISTA ✅
     ========================= */
     axios
-        .get(`/teamOdonto/public/api.php?api=orcamentos&id=${id}`)
-        .then(res => {
+        .get(`/teamOdonto/public/api.php?api=dentistas&id=${id}`) // ✅ CORRIGIDO
+        .then(response => {
 
-            const dados = res.data;
+            const d = response.data;
 
-            // ✅ preencher campos do form
-            for (let key in dados) {
-                const el = form.querySelector(`[name="${key}"]`);
-                if (el) el.value = dados[key];
+            if (!d) {
+                mostrarMensagem('Dentista não encontrado ❌', 'danger');
+                return;
             }
 
-            // ✅ itens (IMPORTANTE)
-            itens = dados.itens || [];
+            // ✅ preencher campos
+            document.querySelector('[name="nome"]').value = d.nome ?? '';
+            document.querySelector('[name="cpf"]').value = d.cpf ?? '';
+            document.querySelector('[name="sexo"]').value = d.sexo ?? '';
+            document.querySelector('[name="telefone"]').value = d.telefone ?? '';
+            document.querySelector('[name="email"]').value = d.email ?? '';
 
-            atualizarTabela();
+            document.querySelector('[name="cro"]').value = d.cro ?? '';
+            document.querySelector('[name="especialidade"]').value = d.especialidade ?? '';
+
+            document.querySelector('[name="cep"]').value = d.cep ?? '';
+            document.querySelector('[name="logradouro"]').value = d.logradouro ?? '';
+            document.querySelector('[name="numero"]').value = d.numero ?? '';
+            document.querySelector('[name="complemento"]').value = d.complemento ?? '';
+            document.querySelector('[name="bairro"]').value = d.bairro ?? '';
+            document.querySelector('[name="cidade"]').value = d.cidade ?? '';
+            document.querySelector('[name="estado"]').value = d.estado ?? '';
 
         })
-        .catch(err => {
-            console.error(err);
-            mostrarMensagem('Erro ao carregar orçamento ❌', 'danger');
+        .catch(error => {
+            console.error(error);
+            mostrarMensagem('Erro ao carregar dentista ❌', 'danger');
         });
 
     /* =========================
-       ADICIONAR ITEM
-    ========================= */
-    document.getElementById('btnAddItem')?.addEventListener('click', () => {
-
-        const procedimento = document.getElementById('procedimento').value;
-        const valor = document.getElementById('valor').value;
-
-        if (!procedimento || !valor) {
-            mostrarMensagem('Selecione procedimento e valor ❌', 'danger');
-            return;
-        }
-
-        itens.push({
-            procedimento,
-            valor
-        });
-
-        atualizarTabela();
-
-        document.getElementById('procedimento').value = '';
-        document.getElementById('valor').value = '';
-    });
-
-    /* =========================
-       ATUALIZAR TABELA
-    ========================= */
-    function atualizarTabela() {
-
-        const tbody = document.getElementById('listaItens');
-        tbody.innerHTML = '';
-
-        if (!itens.length) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="3" class="text-center text-muted">
-                        Nenhum item adicionado
-                    </td>
-                </tr>
-            `;
-            return;
-        }
-
-        itens.forEach((item, index) => {
-
-            const tr = document.createElement('tr');
-
-            tr.innerHTML = `
-                <td>${item.procedimento}</td>
-                <td>R$ ${item.valor}</td>
-                <td>
-                    <button class="btn btn-sm btn-danger">
-                        Remover
-                    </button>
-                </td>
-            `;
-
-            tr.querySelector('button').addEventListener('click', () => {
-                itens.splice(index, 1);
-                atualizarTabela();
-            });
-
-            tbody.appendChild(tr);
-        });
-    }
-
-    /* =========================
-       SALVAR (PUT)
+       SUBMIT (UPDATE)
     ========================= */
     form.addEventListener('submit', e => {
         e.preventDefault();
 
-        if (!itens.length) {
-            mostrarMensagem('Adicione pelo menos um item ❌', 'danger');
-            return;
-        }
+        const dados = Object.fromEntries(
+            new FormData(form)
+        );
 
-        const dados = {
-            ...Object.fromEntries(new FormData(form)),
-            itens
-        };
+        console.log('DADOS ENVIADOS:', dados); // ✅ DEBUG
 
+        /* ===== LOADING ===== */
         btnSubmit.disabled = true;
         btnSubmit.innerHTML = `
             <span class="spinner-border spinner-border-sm me-1"></span>
@@ -130,32 +71,56 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
 
         axios
-            .put(`/teamOdonto/public/api.php?api=orcamentos&id=${id}`, dados)
-            .then(res => {
+            .put(`/teamOdonto/public/api.php?api=dentistas&id=${id}`, dados) // ✅ CORRIGIDO
+            .then(response => {
 
-                if (res.data.success) {
+                if (response.data.success) {
 
-                    mostrarMensagem('Orçamento atualizado com sucesso ✅');
+                    mostrarMensagem('Dentista atualizado com sucesso ✅', 'success');
 
                     setTimeout(() => {
                         window.location.href =
-                            '/teamOdonto/public/index.php?page=orcamento-list';
+                            '/teamOdonto/public/index.php?page=dentista-list';
                     }, 1200);
 
                 } else {
-                    mostrarMensagem('Erro ao atualizar orçamento ❌', 'danger');
+                    mostrarMensagem('Erro ao atualizar dentista ❌', 'danger');
                 }
 
             })
-            .catch(err => {
-                console.error(err);
-                mostrarMensagem('Erro no servidor ❌', 'danger');
+            .catch(error => {
+                console.error(error);
+                mostrarMensagem('Erro de comunicação com o servidor ❌', 'danger');
             })
             .finally(() => {
+
                 btnSubmit.disabled = false;
                 btnSubmit.innerHTML = 'Salvar';
-            });
 
+            });
     });
+
+    /* =========================
+       ALERTA PADRÃO 🔥
+    ========================= */
+    function mostrarMensagem(texto, tipo = 'success') {
+
+        let alerta = document.getElementById('alertaSistema');
+
+        if (!alerta) {
+            alerta = document.createElement('div');
+            alerta.id = 'alertaSistema';
+            alerta.className = `alert alert-${tipo} mt-3`;
+
+            form.prepend(alerta);
+        }
+
+        alerta.className = `alert alert-${tipo} mt-3`;
+        alerta.innerHTML = texto;
+
+        setTimeout(() => {
+            alerta.remove();
+        }, 3000);
+    }
 
 });

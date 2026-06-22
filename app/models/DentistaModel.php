@@ -32,13 +32,31 @@ class DentistaModel {
     }
 
     /* ==========================
-       CREATE COMPLETO
+       CREATE COMPLETO ✅
     ========================== */
     public function criarDentistaCompleto(array $dados): bool {
+
         try {
             $this->db->beginTransaction();
 
-            // ENDEREÇO
+            /* ✅ VALIDAÇÃO (ESSENCIAL) */
+            if (
+                empty($dados['nome']) ||
+                empty($dados['cpf']) ||
+                empty($dados['sexo']) ||
+                empty($dados['cro']) ||
+                empty($dados['especialidade']) ||
+                empty($dados['logradouro']) ||
+                empty($dados['bairro']) ||
+                empty($dados['cidade']) ||
+                empty($dados['estado'])
+            ) {
+                throw new Exception("Preencha todos os campos obrigatórios");
+            }
+
+            /* =========================
+               ENDEREÇO
+            ========================= */
             $stmt = $this->db->prepare("
                 INSERT INTO endereco
                 (cep, logradouro, numero, complemento, bairro, cidade, estado)
@@ -53,9 +71,12 @@ class DentistaModel {
                 $dados['cidade'],
                 $dados['estado']
             ]);
+
             $enderecoId = $this->db->lastInsertId();
 
-            // DADOS PESSOAIS (COM SEXO ✅)
+            /* =========================
+               DADOS PESSOAIS
+            ========================= */
             $stmt = $this->db->prepare("
                 INSERT INTO dados_pessoais
                 (nome, cpf, sexo, telefone, email, endereco_id)
@@ -69,9 +90,12 @@ class DentistaModel {
                 $dados['email'] ?? null,
                 $enderecoId
             ]);
+
             $dadosPessoaisId = $this->db->lastInsertId();
 
-            // DENTISTA
+            /* =========================
+               DENTISTA
+            ========================= */
             $stmt = $this->db->prepare("
                 INSERT INTO dentista
                 (dados_pessoais_id, cro, especialidade)
@@ -84,19 +108,25 @@ class DentistaModel {
             ]);
 
             $this->db->commit();
+
             return true;
 
         } catch (Throwable $e) {
+
             $this->db->rollBack();
-            return false;
+
+            /* ✅ DEBUG REAL (IMPORTANTÍSSIMO) */
+            echo "Erro ao criar dentista: " . $e->getMessage();
+            exit;
         }
     }
 
     /* ==========================
-       BUSCAR POR ID (COM ENDEREÇO ✅)
+       BUSCAR POR ID
     ========================== */
     public function buscarPorId(int $id): array|false {
-        $sql = "
+
+        $stmt = $this->db->prepare("
             SELECT
                 d.id,
                 dp.nome,
@@ -120,22 +150,24 @@ class DentistaModel {
             JOIN endereco e ON e.id = dp.endereco_id
             WHERE d.id = ? AND d.ativo = 1
             LIMIT 1
-        ";
+        ");
 
-        $stmt = $this->db->prepare($sql);
         $stmt->execute([$id]);
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
     /* ==========================
-       UPDATE COMPLETO (COM ENDEREÇO ✅)
+       UPDATE COMPLETO ✅
     ========================== */
     public function atualizarDentistaCompleto(int $id, array $dados): bool {
+
         try {
             $this->db->beginTransaction();
 
-            // ENDEREÇO
+            /* =========================
+               ENDEREÇO
+            ========================= */
             $stmt = $this->db->prepare("
                 UPDATE endereco e
                 JOIN dados_pessoais dp ON dp.endereco_id = e.id
@@ -161,7 +193,9 @@ class DentistaModel {
                 $id
             ]);
 
-            // DADOS PESSOAIS
+            /* =========================
+               DADOS PESSOAIS
+            ========================= */
             $stmt = $this->db->prepare("
                 UPDATE dados_pessoais dp
                 JOIN dentista d ON d.dados_pessoais_id = dp.id
@@ -182,7 +216,9 @@ class DentistaModel {
                 $id
             ]);
 
-            // DENTISTA
+            /* =========================
+               DENTISTA
+            ========================= */
             $stmt = $this->db->prepare("
                 UPDATE dentista
                 SET
@@ -201,39 +237,41 @@ class DentistaModel {
 
         } catch (Throwable $e) {
             $this->db->rollBack();
-            return false;
+
+            echo "Erro ao atualizar dentista: " . $e->getMessage();
+            exit;
         }
     }
 
     /* ==========================
-       DELETE LÓGICO
+       DELETE LÓGICO ✅
     ========================== */
     public function excluirDentista(int $id): bool {
-        try {
-            $stmt = $this->db->prepare(
-                "UPDATE dentista SET ativo = 0 WHERE id = ?"
-            );
-            return $stmt->execute([$id]);
 
-        } catch (Throwable $e) {
-            return false;
-        }
+        $stmt = $this->db->prepare("
+            UPDATE dentista SET ativo = 0 WHERE id = ?
+        ");
+
+        return $stmt->execute([$id]);
     }
 
+    /* ==========================
+       BUSCA AJAX
+    ========================== */
     public function buscarPorNomeOuCro(string $termo): array
-{
-    $stmt = $this->db->prepare("
-        SELECT d.id, dp.nome, d.cro
-        FROM dentista d
-        JOIN dados_pessoais dp ON dp.id = d.dados_pessoais_id
-        WHERE dp.nome LIKE ? OR d.cro LIKE ?
-        ORDER BY dp.nome
-        LIMIT 10
-    ");
+    {
+        $stmt = $this->db->prepare("
+            SELECT d.id, dp.nome, d.cro
+            FROM dentista d
+            JOIN dados_pessoais dp ON dp.id = d.dados_pessoais_id
+            WHERE dp.nome LIKE ? OR d.cro LIKE ?
+            ORDER BY dp.nome
+            LIMIT 10
+        ");
 
-    $like = "%{$termo}%";
-    $stmt->execute([$like, $like]);
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
+        $like = "%{$termo}%";
+        $stmt->execute([$like, $like]);
 
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

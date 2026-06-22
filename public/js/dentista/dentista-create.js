@@ -1,98 +1,22 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    const form = document.getElementById('formOrcamento');
+    const form = document.getElementById('formDentista'); // ✅ CORRETO
     if (!form) return;
 
     const btnSubmit = form.querySelector('button[type="submit"]');
 
-    let itens = []; // 🔥 LISTA DE ITENS
-
-    /* =========================
-       ADICIONAR ITEM
-    ========================= */
-    document.getElementById('btnAddItem')?.addEventListener('click', () => {
-
-        const procedimento = document.getElementById('procedimento').value;
-        const valor = document.getElementById('valor').value;
-
-        if (!procedimento || !valor) {
-            mostrarMensagem('Selecione procedimento e valor ❌', 'danger');
-            return;
-        }
-
-        const item = {
-            procedimento,
-            valor
-        };
-
-        itens.push(item);
-
-        atualizarTabela();
-
-        // limpar campos
-        document.getElementById('procedimento').value = '';
-        document.getElementById('valor').value = '';
-    });
-
-    /* =========================
-       ATUALIZAR TABELA
-    ========================= */
-    function atualizarTabela() {
-
-        const tbody = document.getElementById('listaItens');
-        tbody.innerHTML = '';
-
-        if (!itens.length) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="3" class="text-center text-muted">
-                        Nenhum item adicionado
-                    </td>
-                </tr>
-            `;
-            return;
-        }
-
-        itens.forEach((item, index) => {
-
-            const tr = document.createElement('tr');
-
-            tr.innerHTML = `
-                <td>${item.procedimento}</td>
-                <td>R$ ${item.valor}</td>
-                <td>
-                    <button class="btn btn-sm btn-danger" data-index="${index}">
-                        Remover
-                    </button>
-                </td>
-            `;
-
-            // remover item
-            tr.querySelector('button').addEventListener('click', () => {
-                itens.splice(index, 1);
-                atualizarTabela();
-            });
-
-            tbody.appendChild(tr);
-        });
-    }
-
-    /* =========================
-       SUBMIT (SALVAR)
-    ========================= */
     form.addEventListener('submit', e => {
         e.preventDefault();
 
-        if (!itens.length) {
-            mostrarMensagem('Adicione pelo menos um item ❌', 'danger');
-            return;
-        }
+        const dados = Object.fromEntries(
+            new FormData(form)
+        );
 
-        const dados = {
-            ...Object.fromEntries(new FormData(form)),
-            itens // 🔥 ENVIA TODOS OS ITENS
-        };
+        console.log('DADOS ENVIADOS:', dados); // ✅ DEBUG
 
+        /* =========================
+           LOADING BOTÃO
+        ========================= */
         btnSubmit.disabled = true;
         btnSubmit.innerHTML = `
             <span class="spinner-border spinner-border-sm me-1"></span>
@@ -100,32 +24,61 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
 
         axios
-            .post('/teamOdonto/public/api.php?api=orcamentos', dados)
-            .then(res => {
+            .post('/teamOdonto/public/api.php?api=dentistas', dados) // ✅ CORRETO
+            .then(response => {
 
-                if (res.data.success) {
+                console.log('RESPOSTA:', response.data);
 
-                    mostrarMensagem('Orçamento criado com sucesso ✅');
+                if (response.data.success) {
+
+                    mostrarMensagem('Dentista cadastrado com sucesso ✅', 'success');
 
                     setTimeout(() => {
                         window.location.href =
-                            '/teamOdonto/public/index.php?page=orcamento-list';
+                            '/teamOdonto/public/index.php?page=dentista-list';
                     }, 1200);
 
                 } else {
-                    mostrarMensagem('Erro ao salvar orçamento ❌', 'danger');
+                    mostrarMensagem(
+                        response.data.message || 'Erro ao cadastrar dentista ❌',
+                        'danger'
+                    );
                 }
 
             })
-            .catch(err => {
-                console.error(err);
-                mostrarMensagem('Erro no servidor ❌', 'danger');
+            .catch(error => {
+                console.error(error);
+                mostrarMensagem('Erro de comunicação com o servidor ❌', 'danger');
             })
             .finally(() => {
-                btnSubmit.disabled = false;
-                btnSubmit.innerHTML = 'Salvar';
-            });
 
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = 'Salvar Dentista';
+
+            });
     });
+
+    /* =========================
+       ALERTA PADRÃO 🔥
+    ========================= */
+    function mostrarMensagem(texto, tipo = 'success') {
+
+        let alerta = document.getElementById('alertaSistema');
+
+        if (!alerta) {
+            alerta = document.createElement('div');
+            alerta.id = 'alertaSistema';
+            alerta.className = `alert alert-${tipo} mt-3`;
+
+            form.prepend(alerta);
+        }
+
+        alerta.className = `alert alert-${tipo} mt-3`;
+        alerta.innerHTML = texto;
+
+        setTimeout(() => {
+            alerta.remove();
+        }, 3000);
+    }
 
 });
