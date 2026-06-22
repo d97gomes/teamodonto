@@ -70,6 +70,34 @@ if ($api === 'usuario-publico' && $method === 'POST') {
     exit;
 }
 
+/* ======================
+   RECUPERAR SENHA ✅ (PÚBLICO)
+====================== */
+
+if ($api === 'recuperar-senha' && $method === 'POST') {
+
+    header('Content-Type: application/json; charset=utf-8');
+
+    echo json_encode($usuarioController->recuperarSenha());
+    exit;
+}
+
+/* ======================
+   REDEFINIR SENHA ✅ (PÚBLICO)
+====================== */
+
+if ($api === 'redefinir-senha' && $method === 'POST') {
+
+    header('Content-Type: application/json; charset=utf-8');
+
+    echo json_encode(
+        $usuarioController->redefinirSenha()
+    );
+
+    exit;
+}
+
+
 
 /* ======================
    PROTEÇÃO GLOBAL

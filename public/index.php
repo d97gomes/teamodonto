@@ -7,7 +7,7 @@ define('APP_ROUTER', true);
 ====================== */
 
 $pagina = $_GET['page'] ?? 'home';
-$paginasPublicas = ['login'];
+$paginasPublicas = ['login', 'usuario-create', 'recuperar-senha', 'redefinir-senha'];
 
 if (!in_array($pagina, $paginasPublicas, true) && empty($_SESSION['usuario'])) {
     header('Location: index.php?page=login');
@@ -121,6 +121,18 @@ switch ($pagina) {
         case 'consulta-view':
         require '../app/views/consulta/consultaView.php';
         break; 
+
+    case 'usuario-create':
+        require __DIR__ . '/../app/views/auth/cadastro.php';
+        break;
+
+    case 'recuperar-senha':
+    require __DIR__ . '/../app/views/auth/recuperarSenha.php';
+    break;
+
+    case 'redefinir-senha':
+    require __DIR__ . '/../app/views/auth/redefinirSenha.php';
+    break;
 
     default:
         echo 'Página não encontrada';

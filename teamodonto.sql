@@ -64,15 +64,21 @@ CREATE TABLE IF NOT EXISTS dentista (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ================================
--- USUARIO
+-- USUARIO (COM RECUPERAÇÃO DE SENHA)
 -- ================================
 CREATE TABLE IF NOT EXISTS usuario (
   id INT AUTO_INCREMENT PRIMARY KEY,
   nome VARCHAR(150) NOT NULL,
   email VARCHAR(150) NOT NULL UNIQUE,
   senha_hash VARCHAR(255) NOT NULL,
+
   perfil ENUM('admin','recepcao') NOT NULL,
   ativo TINYINT(1) DEFAULT 1,
+
+  -- NOVOS CAMPOS (RECUPERAÇÃO DE SENHA)
+  reset_token VARCHAR(100) NULL,
+  reset_expira DATETIME NULL,
+
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

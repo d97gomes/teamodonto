@@ -31,42 +31,59 @@
                     <!-- Mensagens -->
                     <div id="mensagem" class="alert d-none"></div>
 
-                    <form id="formLogin" novalidate>
+                                <form id="formLogin" novalidate>
 
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">
-                                Email
-                            </label>
-                            <input 
-                                type="email" 
-                                name="email" 
-                                class="form-control"
-                                placeholder="Digite seu email"
-                                required
-                            >
-                        </div>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">
+                        Email
+                    </label>
+                    <input 
+                        type="email" 
+                        name="email" 
+                        class="form-control"
+                        placeholder="Digite seu email"
+                        required
+                    >
+                </div>
 
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold">
-                                Senha
-                            </label>
-                            <input 
-                                type="password" 
-                                name="senha" 
-                                class="form-control"
-                                placeholder="Digite sua senha"
-                                required
-                            >
-                        </div>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">
+                        Senha
+                    </label>
+                    <input 
+                        type="password" 
+                        name="senha" 
+                        class="form-control"
+                        placeholder="Digite sua senha"
+                        required
+                    >
+                </div>
 
-                        <button 
-                            type="submit" 
-                            class="btn btn-primary w-100 fw-semibold"
-                        >
-                            Entrar
-                        </button>
+                <!-- ✅ LINK RECUPERAR SENHA -->
+                <div class="text-end mb-3">
+                    <a href="/teamOdonto/public/index.php?page=recuperar-senha"
+                    class="small text-decoration-none">
+                        Esqueci minha senha
+                    </a>
+                </div>
 
-                    </form>
+                <button 
+                    type="submit" 
+                    class="btn btn-primary w-100 fw-semibold"
+                >
+                    Entrar
+                </button>
+
+                <!-- ✅ LINK CRIAR USUÁRIO -->
+                <div class="text-center mt-3">
+                    <span class="small text-muted">Não tem conta?</span>
+                    <a href="/teamOdonto/public/index.php?page=usuario-create"
+                    class="text-decoration-none fw-semibold">
+                        Criar usuário
+                    </a>
+                </div>
+
+            </form>
 
                 </div>
             </div>
