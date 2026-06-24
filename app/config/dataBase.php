@@ -10,8 +10,8 @@ class Database {
             try {
                 self::$conn = new PDO(
                     "mysql:host=localhost;port=3306;dbname=teamodonto;charset=utf8mb4",
-                    "hadoopInsano",
-                    "Springlocao",
+                    "",
+                    "",
                     [
                         PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
                         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
